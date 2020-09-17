@@ -1,11 +1,12 @@
 VERSION 5.00
 Object = "{48E59290-9880-11CF-9754-00AA00C00908}#1.0#0"; "MSINET.ocx"
 Begin VB.Form frmMain 
+   BorderStyle     =   0  'None
    Caption         =   "WinterAO Resurrection - Launcher"
-   ClientHeight    =   4800
-   ClientLeft      =   120
-   ClientTop       =   465
-   ClientWidth     =   12645
+   ClientHeight    =   7545
+   ClientLeft      =   0
+   ClientTop       =   0
+   ClientWidth     =   11295
    ControlBox      =   0   'False
    BeginProperty Font 
       Name            =   "Tahoma"
@@ -17,18 +18,13 @@ Begin VB.Form frmMain
       Strikethrough   =   0   'False
    EndProperty
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4800
-   ScaleWidth      =   12645
+   MaxButton       =   0   'False
+   MinButton       =   0   'False
+   Picture         =   "frmMain.frx":0000
+   ScaleHeight     =   7545
+   ScaleWidth      =   11295
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
-   Begin VB.CommandButton cmdSalir 
-      Caption         =   "Salir"
-      Height          =   360
-      Left            =   6960
-      TabIndex        =   2
-      Top             =   3000
-      Width           =   975
-   End
    Begin InetCtlsObjects.Inet Inet1 
       Left            =   360
       Top             =   240
@@ -36,22 +32,29 @@ Begin VB.Form frmMain
       _ExtentY        =   1005
       _Version        =   393216
    End
-   Begin VB.CommandButton cmdJugar 
-      Caption         =   "Jugar"
-      Height          =   1080
-      Left            =   9240
-      TabIndex        =   1
-      Top             =   2280
-      Width           =   2055
+   Begin VB.Image cmdSalir 
+      Height          =   285
+      Left            =   10440
+      Picture         =   "frmMain.frx":30819
+      Top             =   600
+      Width           =   240
+   End
+   Begin VB.Image cmdJugar 
+      Height          =   930
+      Left            =   7560
+      Picture         =   "frmMain.frx":308CE
+      Top             =   6600
+      Width           =   3030
    End
    Begin VB.Label lblPendientes 
       BackStyle       =   0  'Transparent
       Caption         =   "Actualizaciones pendientes: "
+      ForeColor       =   &H00FFFFFF&
       Height          =   195
-      Left            =   360
+      Left            =   600
       TabIndex        =   0
-      Top             =   1560
-      Width           =   11400
+      Top             =   4560
+      Width           =   9960
    End
 End
 Attribute VB_Name = "frmMain"
@@ -60,6 +63,20 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
+
+Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+Const LW_KEY = &H1
+Const G_E = (-20)
+Const W_E = &H80000
+
+Private Sub Form_Load()
+    Skin Me, vbRed
+End Sub
 
 Private Sub cmdJugar_Click()
         
@@ -80,4 +97,13 @@ End Sub
 
 Private Sub cmdSalir_Click()
     End
+End Sub
+
+Sub Skin(Frm As Form, Color As Long)
+    Frm.BackColor = Color
+    Dim Ret As Long
+    Ret = GetWindowLong(Frm.hwnd, G_E)
+    Ret = Ret Or W_E
+    SetWindowLong Frm.hwnd, G_E, Ret
+    SetLayeredWindowAttributes Frm.hwnd, Color, 0, LW_KEY
 End Sub
