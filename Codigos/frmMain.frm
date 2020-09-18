@@ -17,10 +17,11 @@ Begin VB.Form frmMain
       Italic          =   0   'False
       Strikethrough   =   0   'False
    EndProperty
+   Icon            =   "frmMain.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   Picture         =   "frmMain.frx":0000
+   Picture         =   "frmMain.frx":1A041
    ScaleHeight     =   7545
    ScaleWidth      =   11295
    ShowInTaskbar   =   0   'False
@@ -35,14 +36,14 @@ Begin VB.Form frmMain
    Begin VB.Image cmdSalir 
       Height          =   285
       Left            =   10440
-      Picture         =   "frmMain.frx":30819
+      Picture         =   "frmMain.frx":4A85A
       Top             =   600
       Width           =   240
    End
    Begin VB.Image cmdJugar 
       Height          =   930
       Left            =   7560
-      Picture         =   "frmMain.frx":308CE
+      Picture         =   "frmMain.frx":4A90F
       Top             =   6600
       Width           =   3030
    End
