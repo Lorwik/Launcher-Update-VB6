@@ -10,6 +10,7 @@ Class=clsInet; Codigos\clsInet.cls
 Form=Codigos\frmMain.frm
 UserControl=Codigos\ucAsyncDLHost.ctl
 UserControl=Codigos\ucAsyncDLStripe.ctl
+Module=modCripto; Codigos\modCripto.bas
 Startup="Sub Main"
 HelpFile=""
 Title="WinterAOLauncher"

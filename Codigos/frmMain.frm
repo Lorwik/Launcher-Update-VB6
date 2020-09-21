@@ -74,16 +74,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
-Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
-Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
-Const LW_KEY = &H1
-Const G_E = (-20)
-Const W_E = &H80000
-
 Private Sub Form_Load()
     Skin Me, vbRed
 End Sub
@@ -109,31 +99,35 @@ Private Sub cmdSalir_Click()
     End
 End Sub
 
-Sub Skin(Frm As Form, Color As Long)
-    Frm.BackColor = Color
-    Dim Ret As Long
-    Ret = GetWindowLong(Frm.hwnd, G_E)
-    Ret = Ret Or W_E
-    SetWindowLong Frm.hwnd, G_E, Ret
-    SetLayeredWindowAttributes Frm.hwnd, Color, 0, LW_KEY
-End Sub
-
 Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpFileName As String)
-  Debug.Print "DownloadComplete for URL: "; Sender.URL & "; Directorio: " & Sender.LocalFileName
+'**********************************************************
+'Descripcion: Evento cuando termina una descarga
+'**********************************************************
+
+    'Debug.Print "DownloadComplete for URL: "; Sender.URL & "; Directorio: " & Sender.LocalFileName
+    
+    'the complete-event delivers a temporary filename - it is up to the user
+    'of the Control, to decide what to do with this TmpFile... the usual reaction will be
+    'a simple File-Renaming (ensuring an implicit Move-Operation on the FileSystem then)
+    'the Sender is the Control-Stripe of our DownloadListHost-Control - and in the Add-methods
+    'in the Form-Load-Event above, we have defined a "target-LocalFilename" already, which is
+    'associated with the matching URL (which was the Source of this completed Download here)
+    'This target-filename is (so far) only stored as String within the Stripe (Sender.LocalFileName)
+    
+    'So, yeah - just ensure a proper Move/Rename of the delivered TmpFileName
+    
+    If FileExist(Sender.LocalFileName, vbNormal) Then Kill Sender.LocalFileName
   
-  'the complete-event delivers a temporary filename - it is up to the user
-  'of the Control, to decide what to do with this TmpFile... the usual reaction will be
-  'a simple File-Renaming (ensuring an implicit Move-Operation on the FileSystem then)
-  'the Sender is the Control-Stripe of our DownloadListHost-Control - and in the Add-methods
-  'in the Form-Load-Event above, we have defined a "target-LocalFilename" already, which is
-  'associated with the matching URL (which was the Source of this completed Download here)
-  'This target-filename is (so far) only stored as String within the Stripe (Sender.LocalFileName)
+    Name TmpFileName As Sender.LocalFileName
   
-  'So, yeah - just ensure a proper Move/Rename of the delivered TmpFileName
+    If ComprobarHash(Sender.LocalFileName) = False Then  'Si el Hash no coincide...
+    
+        'Chapuza que hay que cambiar
+        If Sender.LocalFileName <> App.Path & "\INIT\VersionInfo.json" Then
+            MsgBox "No se ha podido comprobar la integridad del archivo " & Sender.LocalFileName & " es posible que no se haya podido descargar correctamente."
+        End If
+    End If
   
-  If FileExist(Sender.LocalFileName, vbNormal) Then Kill Sender.LocalFileName
-  
-  Name TmpFileName As Sender.LocalFileName
 End Sub
  
 Private Sub ucAsyncDLHost_DownloadProgress(Sender As ucAsyncDLStripe, ByVal BytesRead As Long, ByVal BytesTotal As Long)

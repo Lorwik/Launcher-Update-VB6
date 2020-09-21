@@ -3,7 +3,7 @@ Begin VB.UserControl ucAsyncDLHost
    Alignable       =   -1  'True
    AutoRedraw      =   -1  'True
    BackColor       =   &H00FFFFFF&
-   BorderStyle     =   1  'Fest Einfach
+   BorderStyle     =   1  'Fixed Single
    ClientHeight    =   3600
    ClientLeft      =   0
    ClientTop       =   0
@@ -65,7 +65,7 @@ Public Function GetCtlKeyForURL(ByVal URL As String) As String
 Dim i As Long
   For i = 1 To Controls.Count - 1
     If StrComp(Controls(i).URL, URL, vbTextCompare) = 0 Then
-      GetCtlKeyForURL = Controls(i).Name: Exit For
+      GetCtlKeyForURL = Controls(i).name: Exit For
     End If
   Next i
 End Function
@@ -74,7 +74,7 @@ Public Function GetCtlKeyForLocalFileName(ByVal LocalFileName As String) As Stri
 Dim i As Long
   For i = 1 To Controls.Count - 1
     If StrComp(Controls(i).LocalFileName, LocalFileName, vbTextCompare) = 0 Then
-      GetCtlKeyForLocalFileName = Controls(i).Name: Exit For
+      GetCtlKeyForLocalFileName = Controls(i).name: Exit For
     End If
   Next i
 End Function
@@ -113,7 +113,7 @@ Dim i&, Ctl As Control, CurTop&
   Next Ctl
   
   'move and ensure visibility here
-  For i = VScroll.Value To Controls.Count - 1
+  For i = VScroll.value To Controls.Count - 1
     If CurTop > ScaleHeight Then Exit For
     Set Ctl = Controls(i)
     

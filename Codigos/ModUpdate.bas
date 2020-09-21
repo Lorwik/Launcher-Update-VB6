@@ -167,7 +167,6 @@ Public Function CompararArchivos() As Boolean
     For i = 1 To TotalFilesREMOTE
 
         archivo = Replace$(ArchivosREMOTE(i).archivo, "-", "\")
-
         'Comprobamos todos los CHECK
         If ArchivosREMOTE(i).md5 <> ArchivosLOCAL(i).md5 Or FileExist(App.Path & "\" & archivo, vbNormal) = False Then
 

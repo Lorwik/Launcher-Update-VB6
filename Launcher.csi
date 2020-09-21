@@ -1,6 +1,22 @@
 [History]
-1=#P0#=mb	#P1#=Skin	#P2#=WinterAOLauncher/frmMain/Skin	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921161802	#P7#=0	#P8#=7	.
-2=#P0#=mb	#P1#=ucAsyncDLHost_DownloadComplete	#P2#=WinterAOLauncher/frmMain/ucAsyncDLHost_DownloadComplete	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161647	#P7#=0	#P8#=-2	.
-3=#P0#=mb	#P1#=lblCancelResume_MouseUp	#P2#=WinterAOLauncher/ucAsyncDLStripe/lblCancelResume_MouseUp	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=2	.
-4=#P0#=mb	#P1#=tHover_Timer	#P2#=WinterAOLauncher/ucAsyncDLStripe/tHover_Timer	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=12	.
-5=#P0#=mb	#P1#=ActualizarCliente	#P2#=WinterAOLauncher/ModUpdate/ActualizarCliente	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921162225	#P7#=0	#P8#=6	.
+1=#P0#=mb	#P1#=CompararArchivos	#P2#=WinterAOLauncher/ModUpdate/CompararArchivos	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921190750	#P7#=0	#P8#=8	.
+2=#P0#=mb	#P1#=Main	#P2#=WinterAOLauncher/modGeneral/Main	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921190640	#P7#=0	#P8#=10	.
+3=#P0#=mb	#P1#=CargarListasREMOTE	#P2#=WinterAOLauncher/ModUpdate/CargarListasREMOTE	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921190418	#P7#=0	#P8#=24	.
+4=#P0#=mb	#P1#=ComprobarHash	#P2#=WinterAOLauncher/modCripto/ComprobarHash	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921192116	#P7#=0	#P8#=1	.
+5=#P0#=mb	#P1#=MD5String	#P2#=WinterAOLauncher/modCripto/MD5String	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921190821	#P7#=0	#P8#=4	.
+6=#P0#=mb	#P1#=MD5File	#P2#=WinterAOLauncher/modCripto/MD5File	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921185142	#P7#=0	#P8#=1	.
+7=#P0#=mb	#P1#=AddDownloadJob	#P2#=WinterAOLauncher/ucAsyncDLHost/AddDownloadJob	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921184113	#P7#=0	#P8#=2	.
+8=#P0#=mb	#P1#=CargarListasLOCAL	#P2#=WinterAOLauncher/ModUpdate/CargarListasLOCAL	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921184019	#P7#=0	#P8#=3	.
+9=#P0#=mb	#P1#=usercontrol_load	#P2#=WinterAOLauncher/ucAsyncDLHost/usercontrol_load	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921182837	#P7#=0	#P8#=0	.
+10=#P0#=mb	#P1#=VScroll_GotFocus	#P2#=WinterAOLauncher/ucAsyncDLHost/VScroll_GotFocus	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921182902	#P7#=0	#P8#=1	.
+11=#P0#=mb	#P1#=FileToString	#P2#=WinterAOLauncher/modGeneral/FileToString	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921182750	#P7#=0	#P8#=12	.
+12=#P0#=mb	#P1#=Skin	#P2#=WinterAOLauncher/modGeneral/Skin	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921182749	#P7#=0	#P8#=0	.
+13=#P0#=mb	#P1#=cmdSalir_Click	#P2#=WinterAOLauncher/frmMain/cmdSalir_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921182743	#P7#=0	#P8#=0	.
+14=#P0#=mb	#P1#=DownloadFile	#P2#=WinterAOLauncher/ucAsyncDLStripe/DownloadFile	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921182634	#P7#=0	#P8#=-1	.
+15=#P0#=mb	#P1#=UserControl_Resize	#P2#=WinterAOLauncher/ucAsyncDLHost/UserControl_Resize	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921184047	#P7#=0	#P8#=1	.
+16=#P0#=mb	#P1#=Form_Load	#P2#=WinterAOLauncher/frmMain/Form_Load	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921182209	#P7#=0	#P8#=1	.
+17=#P0#=mb	#P1#=ActualizarCliente	#P2#=WinterAOLauncher/ModUpdate/ActualizarCliente	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921184033	#P7#=0	#P8#=6	.
+18=#P0#=mb	#P1#=Skin	#P2#=WinterAOLauncher/frmMain/Skin	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921161802	#P7#=0	#P8#=0	.
+19=#P0#=mb	#P1#=ucAsyncDLHost_DownloadComplete	#P2#=WinterAOLauncher/frmMain/ucAsyncDLHost_DownloadComplete	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921192500	#P7#=0	#P8#=8	.
+20=#P0#=mb	#P1#=tHover_Timer	#P2#=WinterAOLauncher/ucAsyncDLStripe/tHover_Timer	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=12	.
+21=#P0#=mb	#P1#=lblCancelResume_MouseUp	#P2#=WinterAOLauncher/ucAsyncDLStripe/lblCancelResume_MouseUp	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=2	.
