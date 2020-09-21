@@ -231,8 +231,6 @@ Public Function ActualizarCliente() As Boolean
 
     For i = 1 To Desactualizados
 
-        frmMain.lblPendientes.Caption = "Descargando '" & archivo & "', archivo " & i & " de " & Desactualizados & ". Por favor, espere."
-
         'Primero lo adaptamos a URL
         archivoURL = Replace$(ListaActualizar(i), "-", "/")
 
@@ -249,7 +247,5 @@ Public Function ActualizarCliente() As Boolean
     frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "VersionInfo.json", App.Path & "\INIT\VersionInfo.json"
     
     ActualizacionesPendientes = False
-    
-    'frmMain.lblPendientes.Caption = "Cliente actualizado."
 
 End Function

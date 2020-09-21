@@ -1,6 +1,7 @@
 VERSION 5.00
 Begin VB.UserControl ucAsyncDLStripe 
-   BackColor       =   &H00FFFFFF&
+   BackColor       =   &H00000000&
+   BackStyle       =   0  'Transparent
    ClientHeight    =   345
    ClientLeft      =   0
    ClientTop       =   0
@@ -14,7 +15,7 @@ Begin VB.UserControl ucAsyncDLStripe
       BackStyle       =   0  'Transparent
       Enabled         =   0   'False
       BeginProperty Font 
-         Name            =   "Arial"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   0
          Weight          =   400
@@ -22,9 +23,9 @@ Begin VB.UserControl ucAsyncDLStripe
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00000000&
+      ForeColor       =   &H00FFFFFF&
       Height          =   285
-      Left            =   1590
+      Left            =   1440
       TabIndex        =   2
       Top             =   60
       Width           =   225
@@ -44,7 +45,7 @@ Begin VB.UserControl ucAsyncDLStripe
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ForeColor       =   &H00404040&
+      ForeColor       =   &H00FFFFFF&
       Height          =   225
       Left            =   60
       TabIndex        =   1
@@ -129,7 +130,7 @@ Public Sub DownloadFile(URL As String, LocalFileName As String, Optional ByVal M
   mLocalFileName = LocalFileName
   mStartDate = Now
   AsyncRead mUrl, vbAsyncTypeFile, mLocalFileName, Mode
-  Extender.ToolTipText = mUrl
+  'Extender.ToolTipText = mUrl
 End Sub
 
 Public Sub CancelDownload()

@@ -1,15 +1,18 @@
 VERSION 5.00
 Begin VB.UserControl ucAsyncDLHost 
    Alignable       =   -1  'True
+   Appearance      =   0  'Flat
    AutoRedraw      =   -1  'True
-   BackColor       =   &H00FFFFFF&
-   BorderStyle     =   1  'Fixed Single
+   BackColor       =   &H80000005&
+   BackStyle       =   0  'Transparent
    ClientHeight    =   3600
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   4800
-   ScaleHeight     =   3600
-   ScaleWidth      =   4800
+   Picture         =   "ucAsyncDLHost.ctx":0000
+   ScaleHeight     =   240
+   ScaleMode       =   3  'Pixel
+   ScaleWidth      =   320
    Begin VB.VScrollBar VScroll 
       Enabled         =   0   'False
       Height          =   795
@@ -20,7 +23,8 @@ Begin VB.UserControl ucAsyncDLHost
       TabStop         =   0   'False
       Top             =   30
       Value           =   1
-      Width           =   270
+      Visible         =   0   'False
+      Width           =   150
    End
 End
 Attribute VB_Name = "ucAsyncDLHost"
@@ -39,13 +43,13 @@ Public Sub AddDownloadJob(URL As String, LocalFileName As String)
 Dim NewStripe As ucAsyncDLStripe
 Static CC As Currency: CC = CC + 1
   
-  If Len(GetCtlKeyForLocalFileName(LocalFileName)) Then Err.Raise vbObjectError, , "We already have a Download with that LocalFilename in the List"
-  If Len(GetCtlKeyForURL(URL)) Then Err.Raise vbObjectError, , "We already have a Download with that URL in the List"
+  If Len(GetCtlKeyForLocalFileName(LocalFileName)) Then Err.Raise vbObjectError, , "Ya hay una descarga con ese nombre de archivo local en la lista"
+  If Len(GetCtlKeyForURL(URL)) Then Err.Raise vbObjectError, , "Ya hay una Descarga con esa URL en la Lista"
  
   With Controls.Add(GetProjectName & ".ucAsyncDLStripe", "K" & CC)
     .Move 0, Controls.Count * .Height, ScaleWidth - VScroll.Width
     .Visible = True
-
+    
     VScroll_Change
  
     Set NewStripe = .Object 'just a cast to the concrete Control-Interface

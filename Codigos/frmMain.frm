@@ -16,19 +16,20 @@ Begin VB.Form frmMain
       Italic          =   0   'False
       Strikethrough   =   0   'False
    EndProperty
+   Icon            =   "frmMain.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   Picture         =   "frmMain.frx":0000
+   Picture         =   "frmMain.frx":1A041
    ScaleHeight     =   7680
    ScaleWidth      =   11400
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin WinterAOLauncher.ucAsyncDLHost ucAsyncDLHost 
-      Height          =   3015
-      Left            =   6120
+      Height          =   3615
+      Left            =   6100
       TabIndex        =   1
-      Top             =   2400
+      Top             =   2700
       Width           =   4815
       _ExtentX        =   8493
       _ExtentY        =   5318
@@ -36,14 +37,14 @@ Begin VB.Form frmMain
    Begin VB.Image cmdSalir 
       Height          =   285
       Left            =   10560
-      Picture         =   "frmMain.frx":30819
+      Picture         =   "frmMain.frx":4A1B5
       Top             =   600
       Width           =   240
    End
    Begin VB.Image cmdJugar 
       Height          =   930
       Left            =   7800
-      Picture         =   "frmMain.frx":308CE
+      Picture         =   "frmMain.frx":4A26A
       Top             =   6600
       Width           =   3030
    End
@@ -52,6 +53,7 @@ Begin VB.Form frmMain
       Left            =   7200
       TabIndex        =   2
       Top             =   3000
+      Visible         =   0   'False
       Width           =   3255
       _ExtentX        =   5741
       _ExtentY        =   661
@@ -61,9 +63,9 @@ Begin VB.Form frmMain
       Caption         =   "Cargando..."
       ForeColor       =   &H00FFFFFF&
       Height          =   195
-      Left            =   600
+      Left            =   6360
       TabIndex        =   0
-      Top             =   4560
+      Top             =   3120
       Width           =   4365
    End
 End
