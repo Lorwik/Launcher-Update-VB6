@@ -9,6 +9,7 @@ Codigo/*.log
 *.lvw
 *.OBJ
 INIT/Config.ini
+INIT/InfoVersion.json
 Recursos/*
 WinterAO Resurrection.exe
 AdminLibSetup.exe
