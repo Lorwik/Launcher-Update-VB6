@@ -698,7 +698,7 @@ Public Function RStoJSON(rs As ADODB.Recordset) As String
 
                 For Each fld In rs.Fields
 
-                    sFlds = (sFlds & IIf(sFlds <> "", ",", "") & """" & fld.name & """:""" & toUnicode(fld.value & "") & """")
+                    sFlds = (sFlds & IIf(sFlds <> "", ",", "") & """" & fld.Name & """:""" & toUnicode(fld.value & "") & """")
                 Next 'fld
 
                 sRecs.Append IIf((Trim$(sRecs.toString) <> ""), "," & vbNewLine, "") & "{" & sFlds & "}"
@@ -771,4 +771,5 @@ Public Function toUnicode(str As String) As String
     Exit Function
 
 End Function
+
 

@@ -226,50 +226,31 @@ Public Function ActualizarCliente() As Boolean
 'Descripción: Descarga los archivos guardados en la lista de desactualizados
 '********************************************
 
-    Dim B() As Byte
     Dim i As Integer
     Dim archivo As String
-
-    frmMain.Inet1.AccessType = icUseDefault
+    Dim archivoURL As String
 
     For i = 1 To Desactualizados
 
-        'Primero lo adaptamos a URL
-        archivo = Replace$(ListaActualizar(i), "-", "/")
-
         frmMain.lblPendientes.Caption = "Descargando '" & archivo & "', archivo " & i & " de " & Desactualizados & ". Por favor, espere."
 
-        B() = frmMain.Inet1.OpenURL(URLUpdate & "cliente/" & UpdateNumberREMOTE & "/" & archivo, icByteArray)
+        'Primero lo adaptamos a URL
+        archivoURL = Replace$(ListaActualizar(i), "-", "/")
 
         'Luego a directorio de Windows
         archivo = Replace$(ListaActualizar(i), "-", "\")
-
-        'Descargamos y guardamos el archivo
-        Open archivo For Binary Access Write As #1
-
-            Put #1, , B()
-
-        Close #1
-
-        frmMain.lblPendientes.Caption = "Archivo " & i & " descargado."
+        
+        frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "cliente/" & UpdateNumberREMOTE & "/" & archivoURL, archivo
 
         DoEvents
 
     Next i
-
-    'Actualizamos el archivo de versiones
-
-    B() = frmMain.Inet1.OpenURL(URLUpdate & "VersionInfo.json", icByteArray)
-
-    'Descargamos y guardamos el archivo
-    Open App.Path & "\INIT\VersionInfo.json" For Binary Access Write As #1
-
-        Put #1, , B()
-
-    Close #1
-
+    
+    'Esto se tiene que mejorar
+    frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "VersionInfo.json", App.Path & "\INIT\VersionInfo.json"
+    
     ActualizacionesPendientes = False
-
-    frmMain.lblPendientes.Caption = "Cliente actualizado."
+    
+    'frmMain.lblPendientes.Caption = "Cliente actualizado."
 
 End Function

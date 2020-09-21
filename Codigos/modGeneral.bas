@@ -106,3 +106,4 @@ Public Function FileToString(strFileName As String) As String
         FileToString = StrConv(InputB(LOF(IFile), IFile), vbUnicode)
     Close #IFile
 End Function
+
