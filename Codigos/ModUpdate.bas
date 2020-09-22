@@ -40,6 +40,8 @@ Public ListaActualizar() As String
 'Indica si hay actualizaciones pendientes
 Public ActualizacionesPendientes As Boolean
 
+Public Fallaron As String
+
 Public Sub CargarListasLOCAL()
 '********************************************
 'Autor: Lorwik

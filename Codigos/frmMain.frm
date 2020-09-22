@@ -85,13 +85,21 @@ Private Sub cmdJugar_Click()
     If ActualizacionesPendientes Then
         ModUpdate.ActualizarCliente
     Else
-        If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then
-            DoEvents
-            Call Shell(App.Path & "\WinterAO Resurrection.exe", vbNormalFocus)
-            End
+        If Len(Fallaron) > 0 Then
+            MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
+            
         Else
-            MsgBox "No se encontro el ejecutable del juego ""0Winter AO Ultimate.EXE""."
-            End
+            If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then
+                Call WriteVar(App.Path & "\INIT\Config.init", "PARAMETERS", "LAUCH", 1)
+                DoEvents
+                Call Shell(App.Path & "\WinterAO Resurrection.exe", vbNormalFocus)
+                End
+                
+            Else
+                MsgBox "No se encontro el ejecutable del juego ""0Winter AO Ultimate.EXE""."
+                
+            End If
+            
         End If
     End If
         
@@ -105,6 +113,8 @@ Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpF
 '**********************************************************
 'Descripcion: Evento cuando termina una descarga
 '**********************************************************
+
+    Static finalizados As Integer
 
     'Debug.Print "DownloadComplete for URL: "; Sender.URL & "; Directorio: " & Sender.LocalFileName
     
@@ -126,9 +136,14 @@ Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpF
     
         'Chapuza que hay que cambiar
         If Sender.LocalFileName <> App.Path & "\INIT\VersionInfo.json" Then
-            MsgBox "No se ha podido comprobar la integridad del archivo " & Sender.LocalFileName & " es posible que no se haya podido descargar correctamente."
+            Fallaron = Fallaron + Sender.LocalFileName & ", "
         End If
     End If
+  
+    finalizados = finalizados + 1
+    
+    If finalizados >= Desactualizados Then _
+        frmMain.lblPendientes.Caption = "Cliente actualizado."
   
 End Sub
  

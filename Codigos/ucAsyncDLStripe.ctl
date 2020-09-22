@@ -130,7 +130,7 @@ Public Sub DownloadFile(URL As String, LocalFileName As String, Optional ByVal M
   mLocalFileName = LocalFileName
   mStartDate = Now
   AsyncRead mUrl, vbAsyncTypeFile, mLocalFileName, Mode
-  'Extender.ToolTipText = mUrl
+  Extender.ToolTipText = mLocalFileName
 End Sub
 
 Public Sub CancelDownload()
