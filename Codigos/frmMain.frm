@@ -21,8 +21,9 @@ Begin VB.Form frmMain
    MaxButton       =   0   'False
    MinButton       =   0   'False
    Picture         =   "frmMain.frx":1A041
-   ScaleHeight     =   7680
-   ScaleWidth      =   11400
+   ScaleHeight     =   512
+   ScaleMode       =   3  'Pixel
+   ScaleWidth      =   760
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin WinterAOLauncher.ucAsyncDLHost ucAsyncDLHost 
@@ -34,17 +35,24 @@ Begin VB.Form frmMain
       _ExtentX        =   8493
       _ExtentY        =   5318
    End
+   Begin VB.Image imgOpciones 
+      Height          =   690
+      Left            =   5520
+      Picture         =   "frmMain.frx":4A1B5
+      Top             =   6790
+      Width           =   2250
+   End
    Begin VB.Image cmdSalir 
       Height          =   285
       Left            =   10560
-      Picture         =   "frmMain.frx":4A1B5
-      Top             =   600
+      Picture         =   "frmMain.frx":4BED7
+      Top             =   1080
       Width           =   240
    End
    Begin VB.Image cmdJugar 
       Height          =   930
       Left            =   7800
-      Picture         =   "frmMain.frx":4A26A
+      Picture         =   "frmMain.frx":4BF8C
       Top             =   6600
       Width           =   3030
    End
@@ -107,6 +115,10 @@ End Sub
 
 Private Sub cmdSalir_Click()
     End
+End Sub
+
+Private Sub imgOpciones_Click()
+    frmOpciones.Show
 End Sub
 
 Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpFileName As String)

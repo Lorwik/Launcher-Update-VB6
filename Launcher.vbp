@@ -11,6 +11,7 @@ Form=Codigos\frmMain.frm
 UserControl=Codigos\ucAsyncDLHost.ctl
 UserControl=Codigos\ucAsyncDLStripe.ctl
 Module=modCripto; Codigos\modCripto.bas
+Form=Codigos\frmOpciones.frm
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""
