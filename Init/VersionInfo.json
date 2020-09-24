@@ -1,0 +1,174 @@
+{
+
+	"MANIFEST": {
+		"UPDATENUMBER": 1,
+		"TOTALFILES": 28,
+		"TOTALCARPETAS": 6
+	},
+	
+	"A1": {
+		"ARCHIVO": "WinterAO Resurrection.exe",
+		"CHECK": "4567FF9480D9CB3B079E4ADE37CF3B40"
+	},
+	
+	"A2": {
+		"ARCHIVO": "zlib.dll",
+		"CHECK": "4965107d112666d3835308a831a29274"
+	},
+	
+	"A3": {
+		"ARCHIVO": "DX8VB.DLL",
+		"CHECK": "d2305fb7d9c69a06425cdcbf69e7fcb9"
+	},
+	
+	"A4": {
+		"ARCHIVO": "AdminLibSetup.exe",
+		"CHECK": "498e84e08f09b6b602507a04600e0123"
+	},
+	
+	"A5": {
+		"ARCHIVO": "Init-BindKeys.bin",
+		"CHECK": "83f4937a67887e0aeed78832538b416d"
+	},
+	
+	"A6": {
+		"ARCHIVO": "Init-Config.ini",
+		"CHECK": "60346D48335A277B94778B6CE35B2709"
+	},
+	
+	"A7": {
+		"ARCHIVO": "Recursos-Ambient.WAO",
+		"CHECK": "9e8538d9fcdeb9228a02c163a09ebf5b"
+	},
+	
+	"A8": {
+		"ARCHIVO": "Recursos-Fuentes.WAO",
+		"CHECK": "d3f9005f44ba8ce4119155a1d49e2e8c"
+	},
+	
+	"A9": {
+		"ARCHIVO": "Recursos-Graficos.WAO",
+		"CHECK": "32C6E5641087EDE9CC6EB9DB0D91B2CB"
+	},
+	
+	"A10": {
+		"ARCHIVO": "Recursos-Interface.WAO",
+		"CHECK": "7e435b9ca4e45ecb4624949781ea65c2"
+	},
+	
+	"A11": {
+		"ARCHIVO": "Recursos-Mapas.WAO",
+		"CHECK": "AAAD6CA1E608EC118CB239DBD05783AD"
+	},
+	
+	"A12": {
+		"ARCHIVO": "Recursos-Minimap.WAO",
+		"CHECK": "1E23B9F2DE129E8C61C8F9329090D622"
+	},
+	
+	"A13": {
+		"ARCHIVO": "Recursos-Music.WAO",
+		"CHECK": "2c05aef8d23910bf22a8f99ae078ca68"
+	},
+	
+	"A14": {
+		"ARCHIVO": "Recursos-Scripts.WAO",
+		"CHECK": "4B8889F0D84D2D51D2577E2CBBCFD3C6"
+	},
+	
+	"A15": {
+		"ARCHIVO": "Recursos-Sounds.WAO",
+		"CHECK": "12855d2800032f41f76a35187895bc17"
+	},
+	
+	"A16": {
+		"ARCHIVO": "Recursos-Lenguajes-CharInfo_english.dat",
+		"CHECK": "15790cf0af3b688e460e498a42aaad73"
+	},
+	
+	"A17": {
+		"ARCHIVO": "Recursos-Lenguajes-CharInfo_spanish.dat",
+		"CHECK": "8386a8d1f4de350eb5daae000a19dbba"
+	},
+	
+	"A18": {
+		"ARCHIVO": "Recursos-Lenguajes-english.json",
+		"CHECK": "c0c7ffc2ca7b0d96fc96eb8f2f976119"
+	},
+	
+	"A19": {
+		"ARCHIVO": "Recursos-Lenguajes-spanish.json",
+		"CHECK": "e48f226018869f25dfe3e14e8052fe4b"
+	},
+	
+	"A20": {
+		"ARCHIVO": "Recursos-Lenguajes-tips_english.json",
+		"CHECK": "4e1796b544e539a6ac1a6f01962286fd"
+	},
+	
+	"A21": {
+		"ARCHIVO": "Recursos-Lenguajes-tips_spanish.json",
+		"CHECK": "94c601d34a35a865c85b88db8b0b1f2d"
+	},
+	
+	"A22": {
+		"ARCHIVO": "Recursos-Lenguajes-Tutorial_english.dat",
+		"CHECK": "f2e23f69294b442adef415f155b1e174"
+	},
+	
+	"A23": {
+		"ARCHIVO": "Recursos-Lenguajes-Tutorial_spanish.dat",
+		"CHECK": "02331c12d433798265d3e6dc0fa116c0"
+	},
+	
+	"A24": {
+		"ARCHIVO": "Recursos-MouseIcons-Baston1.ico",
+		"CHECK": "33aeba63156890c1fe60d140869522d6"
+	},
+	
+	"A25": {
+		"ARCHIVO": "Recursos-MouseIcons-General1.ani",
+		"CHECK": "af21cef7b925b381fd88d7ae26dd1461"
+	},
+	
+	"A26": {
+		"ARCHIVO": "Recursos-MouseIcons-General2.ani",
+		"CHECK": "54199240e4efefa204418c6c973221b2"
+	},
+	
+	"A27": {
+		"ARCHIVO": "Recursos-MouseIcons-Hand.ico",
+		"CHECK": "f8d3dc96994866e4b6251b51e0343c79"
+	},
+	
+	"A28": {
+		"ARCHIVO": "Recursos-Skins-Winter.WAO",
+		"CHECK": "9b2d947ddab2f0eefb66a22524ef1e56"
+	},
+	
+	"C1": {
+		"CARPETA": "Fotos"
+	},
+	
+	"C2": {
+		"CARPETA": "Init"
+	},
+	
+	"C3": {
+		"CARPETA": "Recursos"
+	},
+	
+	"C4": {
+		"CARPETA": "Recursos-Lenguajes"
+	},
+	
+	"C5": {
+		"CARPETA": "Recursos-MouseIcons"
+	},
+	
+	"C6": {
+		"CARPETA": "Recursos-Skins"
+	}
+	
+
+}

@@ -35,6 +35,36 @@ Begin VB.Form frmMain
       _ExtentX        =   8493
       _ExtentY        =   5318
    End
+   Begin VB.Label lblVersion 
+      Alignment       =   2  'Center
+      BackStyle       =   0  'Transparent
+      Caption         =   "#0"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   195
+      Left            =   480
+      TabIndex        =   3
+      Top             =   6510
+      Width           =   570
+   End
+   Begin VB.Shape Shape1 
+      BackColor       =   &H00000000&
+      BackStyle       =   1  'Opaque
+      BorderColor     =   &H00404040&
+      Height          =   255
+      Left            =   480
+      Shape           =   4  'Rounded Rectangle
+      Top             =   6480
+      Width           =   615
+   End
    Begin VB.Image imgOpciones 
       Height          =   690
       Left            =   5520
@@ -92,13 +122,14 @@ Private Sub cmdJugar_Click()
         
     If ActualizacionesPendientes Then
         ModUpdate.ActualizarCliente
+        
     Else
         If Len(Fallaron) > 0 Then
             MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
             
         Else
             If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then
-                Call WriteVar(App.Path & "\INIT\Config.init", "PARAMETERS", "LAUCH", 1)
+                Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
                 DoEvents
                 Call Shell(App.Path & "\WinterAO Resurrection.exe", vbNormalFocus)
                 End

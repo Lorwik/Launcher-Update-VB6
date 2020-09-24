@@ -11,26 +11,25 @@ Type tArchivos
     archivo As String
 End Type
 
+Type tUpdate
+    updateNumber As Integer
+    TotalFiles As Integer
+    TotalCarpetas As Integer
+    Archivos() As tArchivos
+    Carpetas() As String
+    JsonListas As Object
+End Type
+
 '************************
 'LOCAL
 '************************
-Private UpdateNumberLOCAL As Integer
-Public TotalFilesLOCAL As Integer
-Public TotalCarpetasLOCAL As Integer
-Public ArchivosLOCAL() As tArchivos
-Public CarpetasLOCAL() As String
-Private JsonListasLOCAL As Object
+Public UpdateLocal As tUpdate
 '************************
 
 '************************
 'REMOTO
 '************************
-Private UpdateNumberREMOTE As Integer
-Public TotalFilesREMOTE As Integer
-Public TotalCarpetasREMOTE As Integer
-Public ArchivosREMOTE() As tArchivos
-Public CarpetasREMOTE() As String
-Private JsonListasREMOTE As Object
+Public updateREMOTE As tUpdate
 '************************
 
 Public SinVersiones As Boolean
@@ -64,26 +63,26 @@ Public Sub CargarListasLOCAL()
 
     FileVer = FileToString(LocalFile)
 
-    Set JsonListasLOCAL = ModJson.parse(FileVer)
+    Set UpdateLocal.JsonListas = ModJson.parse(FileVer)
 
-    UpdateNumberLOCAL = Val(JsonListasLOCAL.Item("MANIFEST").Item("UPDATENUMBER"))
-    TotalFilesLOCAL = Val(JsonListasLOCAL.Item("MANIFEST").Item("TOTALFILES"))
-    TotalCarpetasLOCAL = Val(JsonListasLOCAL.Item("MANIFEST").Item("TOTALCARPETAS"))
+    UpdateLocal.updateNumber = Val(UpdateLocal.JsonListas.Item("MANIFEST").Item("UPDATENUMBER"))
+    UpdateLocal.TotalFiles = Val(UpdateLocal.JsonListas.Item("MANIFEST").Item("TOTALFILES"))
+    UpdateLocal.TotalCarpetas = Val(UpdateLocal.JsonListas.Item("MANIFEST").Item("TOTALCARPETAS"))
 
-    ReDim ArchivosLOCAL(1 To TotalFilesLOCAL) As tArchivos
+    ReDim UpdateLocal.Archivos(1 To UpdateLocal.TotalFiles) As tArchivos
 
-    For i = 1 To TotalFilesLOCAL
+    For i = 1 To UpdateLocal.TotalFiles
 
-        ArchivosLOCAL(i).archivo = JsonListasLOCAL.Item("A" & i).Item("ARCHIVO")
-        ArchivosLOCAL(i).md5 = JsonListasLOCAL.Item("A" & i).Item("CHECK")
+        UpdateLocal.Archivos(i).archivo = UpdateLocal.JsonListas.Item("A" & i).Item("ARCHIVO")
+        UpdateLocal.Archivos(i).md5 = UCase(UpdateLocal.JsonListas.Item("A" & i).Item("CHECK"))
 
     Next i
 
-    ReDim CarpetasLOCAL(1 To TotalCarpetasLOCAL) As String
+    ReDim UpdateLocal.Carpetas(1 To UpdateLocal.TotalCarpetas) As String
 
-    For i = 1 To TotalCarpetasLOCAL
+    For i = 1 To UpdateLocal.TotalCarpetas
 
-        CarpetasLOCAL(i) = JsonListasLOCAL.Item("C" & i).Item("CARPETA")
+        UpdateLocal.Carpetas(i) = UpdateLocal.JsonListas.Item("C" & i).Item("CARPETA")
 
     Next i
 
@@ -106,26 +105,26 @@ Public Sub CargarListasREMOTE()
     responseServer = Inet.Execute
     responseServer = Inet.GetResponseAsString
 
-    Set JsonListasREMOTE = ModJson.parse(responseServer)
+    Set updateREMOTE.JsonListas = ModJson.parse(responseServer)
 
-    UpdateNumberREMOTE = Val(JsonListasREMOTE.Item("MANIFEST").Item("UPDATENUMBER"))
-    TotalFilesREMOTE = Val(JsonListasREMOTE.Item("MANIFEST").Item("TOTALFILES"))
-    TotalCarpetasREMOTE = Val(JsonListasREMOTE.Item("MANIFEST").Item("TOTALCARPETAS"))
+    updateREMOTE.updateNumber = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("UPDATENUMBER"))
+    updateREMOTE.TotalFiles = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALFILES"))
+    updateREMOTE.TotalCarpetas = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALCARPETAS"))
 
-    ReDim ArchivosREMOTE(1 To TotalFilesREMOTE) As tArchivos
+    ReDim updateREMOTE.Archivos(1 To updateREMOTE.TotalFiles) As tArchivos
 
-    For i = 1 To TotalFilesREMOTE
+    For i = 1 To updateREMOTE.TotalFiles
 
-        ArchivosREMOTE(i).archivo = JsonListasREMOTE.Item("A" & i).Item("ARCHIVO")
-        ArchivosREMOTE(i).md5 = JsonListasREMOTE.Item("A" & i).Item("CHECK")
+        updateREMOTE.Archivos(i).archivo = updateREMOTE.JsonListas.Item("A" & i).Item("ARCHIVO")
+        updateREMOTE.Archivos(i).md5 = UCase(updateREMOTE.JsonListas.Item("A" & i).Item("CHECK"))
 
     Next i
 
-    ReDim CarpetasREMOTE(1 To TotalCarpetasREMOTE) As String
+    ReDim updateREMOTE.Carpetas(1 To updateREMOTE.TotalCarpetas) As String
 
-    For i = 1 To TotalCarpetasREMOTE
+    For i = 1 To updateREMOTE.TotalCarpetas
 
-        CarpetasREMOTE(i) = JsonListasREMOTE.Item("C" & i).Item("CARPETA")
+        updateREMOTE.Carpetas(i) = updateREMOTE.JsonListas.Item("C" & i).Item("CARPETA")
 
     Next i
 
@@ -140,7 +139,7 @@ Public Function CompararVersiones() As Boolean
 'Descripción: Comprueba si hay actualizaciones
 '********************************************
 
-    If UpdateNumberLOCAL <> UpdateNumberREMOTE Then
+    If UpdateLocal.updateNumber <> updateREMOTE.updateNumber Then
         CompararVersiones = False
         Exit Function
     End If
@@ -161,16 +160,16 @@ Public Function CompararArchivos() As Boolean
     Dim archivo         As String
 
     'El total de archivos remoto es diferente al de local? 'Hay que actualizar seguro.
-    If TotalFilesREMOTE <> TotalFilesLOCAL Then
+    If updateREMOTE.TotalFiles <> UpdateLocal.TotalFiles Then
         CompararArchivos = True
         Exit Function
     End If
 
-    For i = 1 To TotalFilesREMOTE
+    For i = 1 To updateREMOTE.TotalFiles
 
-        archivo = Replace$(ArchivosREMOTE(i).archivo, "-", "\")
+        archivo = Replace$(updateREMOTE.Archivos(i).archivo, "-", "\")
         'Comprobamos todos los CHECK
-        If ArchivosREMOTE(i).md5 <> ArchivosLOCAL(i).md5 Or FileExist(App.Path & "\" & archivo, vbNormal) = False Then
+        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & archivo, vbNormal) = False Then
 
             ReDim Preserve ListaActualizar(Desactualizados + 1) As String
 
@@ -178,7 +177,7 @@ Public Function CompararArchivos() As Boolean
             Desactualizados = Desactualizados + 1
 
             'Añadimos el archivo a la lista para actualizar mas tarde
-            ListaActualizar(Desactualizados) = ArchivosREMOTE(i).archivo
+            ListaActualizar(Desactualizados) = updateREMOTE.Archivos(i).archivo
 
             flag = True 'Activamos el flag
         End If
@@ -205,9 +204,9 @@ Public Sub CompararyCrearCarpetas()
     Dim i As Integer
     Dim Directorio As String
 
-    For i = 1 To TotalCarpetasREMOTE
+    For i = 1 To updateREMOTE.TotalCarpetas
 
-        Directorio = Replace(CarpetasREMOTE(i), "-", "\")
+        Directorio = Replace(updateREMOTE.Carpetas(i), "-", "\")
 
         If Not FileExist(App.Path & Directorio, vbDirectory) Then
 
@@ -239,7 +238,7 @@ Public Function ActualizarCliente() As Boolean
         'Luego a directorio de Windows
         archivo = Replace$(ListaActualizar(i), "-", "\")
         
-        frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "cliente/" & UpdateNumberREMOTE & "/" & archivoURL, archivo
+        frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "cliente/" & archivoURL, archivo
 
         DoEvents
 

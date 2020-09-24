@@ -28,13 +28,13 @@ Public Sub Main()
     If SinVersiones Then
         ActualizacionesPendientes = True
         
-        Desactualizados = TotalFilesREMOTE
+        Desactualizados = updateREMOTE.TotalFiles
         
         ReDim Preserve ListaActualizar(Desactualizados) As String
         
         For i = 1 To Desactualizados
             'Añadimos el archivo a la lista para actualizar mas tarde
-            ListaActualizar(i) = ArchivosREMOTE(i).archivo
+            ListaActualizar(i) = updateREMOTE.Archivos(i).archivo
         Next i
         
         frmMain.lblPendientes.Caption = "¡No se ha encontrado el cliente! Pulsa Jugar para descargar los archivos del cliente."
@@ -48,6 +48,8 @@ Public Sub Main()
             frmMain.lblPendientes.Caption = "Cliente actualizado. Pulsa Jugar para abrir el cliente."
         End If
     End If
+    
+    frmMain.lblVersion.Caption = updateREMOTE.updateNumber
     
     DoEvents
     

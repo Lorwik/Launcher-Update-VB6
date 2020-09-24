@@ -28,7 +28,7 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
     
     For i = 1 To Desactualizados
 
-        If ArchivosREMOTE(i).archivo = Replace$(File, "\", "-") Then
+        If updateREMOTE.Archivos(i).archivo = Replace$(File, "\", "-") Then
             Encontrado = i
             Exit For
         End If
@@ -38,8 +38,8 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
     If Encontrado > 0 Then '¿Lo encontro?
         Hash = MD5File(File)
         
-        If ArchivosREMOTE(Encontrado).md5 <> Trim(Hash) Then '¿No Coincide?
-            Debug.Print "Hash no coincide Original: " & ArchivosREMOTE(Encontrado).md5 & " Hash del archivo: " & Hash
+        If updateREMOTE.Archivos(Encontrado).md5 <> UCase(Trim(Hash)) Then '¿No Coincide?
+            Debug.Print "Hash no coincide Original: " & updateREMOTE.Archivos(Encontrado).md5 & " Hash del archivo: " & Hash
             ComprobarHash = False
             Exit Function
             
@@ -52,7 +52,7 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
         
     Else '¿No lo encontro?
     
-        Debug.Print "No se encontrol el archivo " & File & " con Indice: " & Encontrado
+        Debug.Print "No se encontro el archivo " & File & " con Indice: " & Encontrado
         ComprobarHash = False
         Exit Function
     End If
