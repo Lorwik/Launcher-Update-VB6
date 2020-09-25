@@ -114,6 +114,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Private Const CLIENTEXE As String = "\WinterAOResurrection.exe"
+
 Private Sub Form_Load()
     Skin Me, vbRed
 End Sub
@@ -131,10 +133,10 @@ Private Sub cmdJugar_Click()
             
         Else 'Si todo esta OK, lanzamos el juego
         
-            If FileExist(App.Path & "\WinterAOResurrection.exe", vbNormal) Then '¿Existe el .exe del cliente?
+            If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
                 Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
                 DoEvents
-                Call Shell(App.Path & "\WinterAOResurrection.exe", vbNormalFocus)
+                Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
                 End
                 
             Else 'Si no existe, no podemos lanzar nada
@@ -188,6 +190,7 @@ Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpF
         
     Else 'Si es una actualizacion del Launcher...
         
+        ComprobarHash (Sender.LocalFileName)
         LauncherDesactualizado = False
         
     End If

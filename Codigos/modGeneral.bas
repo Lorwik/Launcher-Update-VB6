@@ -149,7 +149,7 @@ Public Sub LauncherLog(Desc As String)
     'Last Modification: 25/09/2020
     '***************************************************
 
-    On Error GoTo errHandler
+    On Error GoTo errhandler
 
     Dim nfile As Integer
         nfile = FreeFile ' obtenemos un canal
@@ -162,7 +162,7 @@ Public Sub LauncherLog(Desc As String)
     
     Debug.Print Desc
     
-errHandler:
+errhandler:
 
 End Sub
 
