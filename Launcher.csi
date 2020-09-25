@@ -1,15 +1,15 @@
 [History]
-1=#P0#=mb	#P1#=ActualizarCliente	#P2#=WinterAOLauncher/ModUpdate/ActualizarCliente	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925210307	#P7#=0	#P8#=33	.
-2=#P0#=mb	#P1#=ucAsyncDLHost_DownloadComplete	#P2#=WinterAOLauncher/frmMain/ucAsyncDLHost_DownloadComplete	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200925210227	#P7#=0	#P8#=34	.
-3=#P0#=mb	#P1#=cmdJugar_Click	#P2#=WinterAOLauncher/frmMain/cmdJugar_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200925205459	#P7#=0	#P8#=4	.
-4=#P0#=mb	#P1#=Main	#P2#=WinterAOLauncher/modGeneral/Main	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925191622	#P7#=0	#P8#=12	.
-5=#P0#=mb	#P1#=ComprobarHash	#P2#=WinterAOLauncher/modCripto/ComprobarHash	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925210912	#P7#=0	#P8#=20	.
-6=#P0#=mb	#P1#=LauncherLog	#P2#=WinterAOLauncher/modGeneral/LauncherLog	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925191244	#P7#=0	#P8#=0	.
-7=#P0#=mb	#P1#=ActualizarVersionInfo	#P2#=WinterAOLauncher/modGeneral/ActualizarVersionInfo	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925191223	#P7#=0	#P8#=-2	.
-8=#P0#=mb	#P1#=CargarListasLOCAL	#P2#=WinterAOLauncher/ModUpdate/CargarListasLOCAL	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925185214	#P7#=0	#P8#=32	.
-9=#P0#=mb	#P1#=CargarListasREMOTE	#P2#=WinterAOLauncher/ModUpdate/CargarListasREMOTE	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925184641	#P7#=0	#P8#=22	.
-10=#P0#=mb	#P1#=LocalFile	#P2#=WinterAOLauncher/ModUpdate/LocalFile	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925183918	#P7#=0	#P8#=0	.
-11=#P0#=mb	#P1#=ObtenerVersionFile	#P2#=WinterAOLauncher/ModUpdate/ObtenerVersionFile	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925210850	#P7#=0	#P8#=16	.
+1=#P0#=mb	#P1#=ComprobarHash	#P2#=WinterAOLauncher/modCripto/ComprobarHash	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925210912	#P7#=0	#P8#=20	.
+2=#P0#=mb	#P1#=ObtenerVersionFile	#P2#=WinterAOLauncher/ModUpdate/ObtenerVersionFile	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925210850	#P7#=0	#P8#=16	.
+3=#P0#=mb	#P1#=ActualizarCliente	#P2#=WinterAOLauncher/ModUpdate/ActualizarCliente	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925212450	#P7#=0	#P8#=15	.
+4=#P0#=mb	#P1#=ucAsyncDLHost_DownloadComplete	#P2#=WinterAOLauncher/frmMain/ucAsyncDLHost_DownloadComplete	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200925212542	#P7#=0	#P8#=15	.
+5=#P0#=mb	#P1#=cmdJugar_Click	#P2#=WinterAOLauncher/frmMain/cmdJugar_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200925205459	#P7#=0	#P8#=1	.
+6=#P0#=mb	#P1#=Main	#P2#=WinterAOLauncher/modGeneral/Main	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925191622	#P7#=0	#P8#=39	.
+7=#P0#=mb	#P1#=LauncherLog	#P2#=WinterAOLauncher/modGeneral/LauncherLog	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925191244	#P7#=0	#P8#=0	.
+8=#P0#=mb	#P1#=ActualizarVersionInfo	#P2#=WinterAOLauncher/modGeneral/ActualizarVersionInfo	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925191223	#P7#=0	#P8#=-2	.
+9=#P0#=mb	#P1#=CargarListasLOCAL	#P2#=WinterAOLauncher/ModUpdate/CargarListasLOCAL	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925185214	#P7#=0	#P8#=32	.
+10=#P0#=mb	#P1#=CargarListasREMOTE	#P2#=WinterAOLauncher/ModUpdate/CargarListasREMOTE	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925184641	#P7#=0	#P8#=2	.
+11=#P0#=mb	#P1#=LocalFile	#P2#=WinterAOLauncher/ModUpdate/LocalFile	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925183918	#P7#=0	#P8#=0	.
 12=#P0#=mb	#P1#=ReadField	#P2#=WinterAOLauncher/modGeneral/ReadField	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925183743	#P7#=0	#P8#=20	.
 13=#P0#=mb	#P1#=Skin	#P2#=WinterAOLauncher/modGeneral/Skin	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925183024	#P7#=0	#P8#=1	.
 14=#P0#=mb	#P1#=CompararArchivos	#P2#=WinterAOLauncher/ModUpdate/CompararArchivos	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200925180843	#P7#=0	#P8#=41	.
@@ -30,5 +30,5 @@
 29=#P0#=mb	#P1#=UserControl_Resize	#P2#=WinterAOLauncher/ucAsyncDLHost/UserControl_Resize	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921184047	#P7#=0	#P8#=1	.
 30=#P0#=mb	#P1#=FileToString	#P2#=WinterAOLauncher/modGeneral/FileToString	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200921182750	#P7#=0	#P8#=6	.
 31=#P0#=mb	#P1#=cmdSalir_Click	#P2#=WinterAOLauncher/frmMain/cmdSalir_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921182743	#P7#=0	#P8#=0	.
-32=#P0#=mb	#P1#=lblCancelResume_MouseUp	#P2#=WinterAOLauncher/ucAsyncDLStripe/lblCancelResume_MouseUp	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=2	.
-33=#P0#=mb	#P1#=tHover_Timer	#P2#=WinterAOLauncher/ucAsyncDLStripe/tHover_Timer	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=6	.
+32=#P0#=mb	#P1#=tHover_Timer	#P2#=WinterAOLauncher/ucAsyncDLStripe/tHover_Timer	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=6	.
+33=#P0#=mb	#P1#=lblCancelResume_MouseUp	#P2#=WinterAOLauncher/ucAsyncDLStripe/lblCancelResume_MouseUp	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200921161102	#P7#=0	#P8#=2	.

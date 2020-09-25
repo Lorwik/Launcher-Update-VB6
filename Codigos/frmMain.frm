@@ -32,8 +32,8 @@ Begin VB.Form frmMain
       TabIndex        =   1
       Top             =   2700
       Width           =   4815
-      _ExtentX        =   8493
-      _ExtentY        =   5318
+      _extentx        =   8493
+      _extenty        =   5318
    End
    Begin VB.Label lblVersion 
       Alignment       =   2  'Center
@@ -93,8 +93,8 @@ Begin VB.Form frmMain
       Top             =   3000
       Visible         =   0   'False
       Width           =   3255
-      _ExtentX        =   5741
-      _ExtentY        =   661
+      _extentx        =   5741
+      _extenty        =   661
    End
    Begin VB.Label lblPendientes 
       BackStyle       =   0  'Transparent
@@ -177,16 +177,20 @@ Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpF
     If FileExist(Sender.LocalFileName, vbNormal) Then Kill Sender.LocalFileName
   
     Name TmpFileName As Sender.LocalFileName
-  
-    If ComprobarHash(Sender.LocalFileName) = False Then  'Si el Hash no coincide...
     
-        'Chapuza que hay que cambiar
-        If Sender.LocalFileName <> App.Path & "\INIT\VersionInfo.json" Then
-            Fallaron = Fallaron + Sender.LocalFileName & ", "
-        End If
+    
+    If Sender.LocalFileName <> LAUNCHEREXEUP Then
+        'Si el Hash no coincide...
+        If ComprobarHash(Sender.LocalFileName) = False Then _
+              Fallaron = Fallaron + Sender.LocalFileName & ", "
+        
+        finalizados = finalizados + 1
+        
+    Else 'Si es una actualizacion del Launcher...
+        
+        LauncherDesactualizado = False
+        
     End If
-  
-    finalizados = finalizados + 1
     
     If finalizados >= Desactualizados Then _
         frmMain.lblPendientes.Caption = "Cliente actualizado."

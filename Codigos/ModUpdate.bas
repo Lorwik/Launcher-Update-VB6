@@ -3,9 +3,10 @@ Option Explicit
 
 Public Inet As clsInet
 
-Private Const URLUpdate As String = "http://winterao.com.ar/update/"
-Private Const VersionInfoJSON As String = "VersionInfo.json"
-Private Const VersionInfoINI As String = "VersionInfo.ini"
+Private Const URLUPDATE As String = "http://winterao.com.ar/update/"
+Private Const VERSIONINFOJSON As String = "VersionInfo.json"
+Private Const VERSIONINFOINI As String = "VersionInfo.ini"
+Public Const LAUNCHEREXEUP As String = "WinterAOLauncher.exe.up"
 
 Type tArchivos
     md5 As String
@@ -38,7 +39,7 @@ Public LauncherDesactualizado As Boolean
 Public Fallaron As String
 
 Public Function LocalFile() As String
-    LocalFile = App.Path & "\Init\" & VersionInfoINI
+    LocalFile = App.Path & "\Init\" & VERSIONINFOINI
 End Function
 
 Public Sub CargarListasLOCAL()
@@ -94,7 +95,7 @@ Public Sub CargarListasREMOTE()
 
     Set Inet = New clsInet
 
-    responseServer = Inet.OpenRequest(URLUpdate & VersionInfoJSON, "GET")
+    responseServer = Inet.OpenRequest(URLUPDATE & VERSIONINFOJSON, "GET")
     responseServer = Inet.Execute
     responseServer = Inet.GetResponseAsString
 
@@ -226,11 +227,10 @@ Public Function ActualizarCliente() As Boolean
     Dim archivoURL As String
 
     If LauncherDesactualizado Then
-        If FileExist(App.Path & "\WinterAOLauncher.exe.up", vbNormal) Then Kill App.Path & "\WinterAOLauncher.exe.up"
-        frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "launcher/WinterAOLauncher.exe.up", "WinterAOLauncher.exe.up"
+        If FileExist(App.Path & "\" & LAUNCHEREXEUP, vbNormal) Then Kill App.Path & "\" & LAUNCHEREXEUP
+        frmMain.ucAsyncDLHost.AddDownloadJob URLUPDATE & "launcher/" & LAUNCHEREXEUP, LAUNCHEREXEUP
 
         DoEvents
-        LauncherDesactualizado = False
     End If
     
     If Desactualizados > 0 Then
@@ -242,7 +242,7 @@ Public Function ActualizarCliente() As Boolean
             'Luego a directorio de Windows
             Archivo = Replace$(DesactualizadosList(i).Archivo, "-", "\")
             
-            frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "cliente/" & archivoURL, Archivo
+            frmMain.ucAsyncDLHost.AddDownloadJob URLUPDATE & "cliente/" & archivoURL, Archivo
     
             DoEvents
     
