@@ -26,35 +26,64 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
     
     Encontrado = 0
     
-    For i = 1 To Desactualizados
-
-        If updateREMOTE.Archivos(i).archivo = Replace$(File, "\", "-") Then
-            Encontrado = i
-            Exit For
-        End If
-    
-    Next i
-    
-    If Encontrado > 0 Then '¿Lo encontro?
+    '********************************************
+    'ACTUALIZAR LAUNCHER
+    '********************************************
+    If LauncherDesactualizado Then
         Hash = MD5File(File)
-        
-        If updateREMOTE.Archivos(Encontrado).md5 <> UCase(Trim(Hash)) Then '¿No Coincide?
-            Debug.Print "Hash no coincide Original: " & updateREMOTE.Archivos(Encontrado).md5 & " Hash del archivo: " & Hash
+            
+        If updateREMOTE.LauncherCheck <> UCase(Trim(Hash)) Then '¿No Coincide?
+            Call LauncherLog("Hash del Launcher no coincide. Hash del archivo: " & UCase(Trim(Hash)))
             ComprobarHash = False
             Exit Function
-            
+                
         Else '¿Coincide?
-            Debug.Print File & " coincide!"
+            
+            Call WriteVar(LocalFile, "MANIFEST", "CHECK", UCase(Trim(Hash)))
+                
             ComprobarHash = True
             Exit Function
-            
+                
         End If
-        
-    Else '¿No lo encontro?
-    
-        Debug.Print "No se encontro el archivo " & File & " con Indice: " & Encontrado
-        ComprobarHash = False
+            
         Exit Function
     End If
     
+    '********************************************
+    'ACTUALIZAR RESTO DE ARCHIVOS
+    '********************************************
+    
+    For i = 1 To Desactualizados
+        If DesactualizadosList(i).Archivo = Replace$(File, "\", "-") Then
+            Encontrado = i
+            Exit For
+        End If
+        
+    Next i
+        
+    If Encontrado > 0 Then '¿Lo encontro?
+        Hash = MD5File(File)
+            
+        If DesactualizadosList(Encontrado).md5 <> UCase(Trim(Hash)) Then '¿No Coincide?
+            Call LauncherLog("Hash del archivo " & DesactualizadosList(Encontrado).Archivo & " no coincide " & " Hash del archivo: " & UCase(Trim(Hash)))
+            ComprobarHash = False
+            Exit Function
+                
+        Else '¿Coincide?
+                
+            Call ActualizarVersionInfo(DesactualizadosList(Encontrado).Archivo, DesactualizadosList(Encontrado).md5)
+                
+            ComprobarHash = True
+            Exit Function
+                
+        End If
+            
+    Else '¿No lo encontro?
+        
+        Debug.Print "No se encontro el archivo " & File & " con Indice: " & Encontrado
+        Call LauncherLog("No se encontro el archivo " & File & " con Indice: " & Encontrado)
+        ComprobarHash = False
+        Exit Function
+    End If
+
 End Function

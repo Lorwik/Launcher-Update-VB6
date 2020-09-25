@@ -9,7 +9,7 @@ Private Const VersionInfoINI As String = "VersionInfo.ini"
 
 Type tArchivos
     md5 As String
-    archivo As String
+    Archivo As String
 End Type
 
 Type tUpdate
@@ -19,28 +19,27 @@ Type tUpdate
     Archivos() As tArchivos
     Carpetas() As String
     JsonListas As Object
+    LauncherCheck As String
 End Type
 
 '************************
-'LOCAL
-'************************
 Public UpdateLocal As tUpdate
-'************************
-
-'************************
-'REMOTO
-'************************
 Public updateREMOTE As tUpdate
 '************************
 
-Public SinVersiones As Boolean
-Public Desactualizados As Integer
-Public ListaActualizar() As String
+Public SinVersiones As Boolean 'Si no encontro el VersionInfo
+Public Desactualizados As Integer 'Numero de archivos desactualizados
+Public DesactualizadosList() As tArchivos
 
 'Indica si hay actualizaciones pendientes
 Public ActualizacionesPendientes As Boolean
+Public LauncherDesactualizado As Boolean
 
 Public Fallaron As String
+
+Public Function LocalFile() As String
+    LocalFile = App.Path & "\Init\" & VersionInfoINI
+End Function
 
 Public Sub CargarListasLOCAL()
 '********************************************
@@ -49,11 +48,8 @@ Public Sub CargarListasLOCAL()
 'Descripción: Carga la lista de versiones LOCAL
 '********************************************
 
-    Dim archivo     As String
-    Dim LocalFile   As String
+    Dim Archivo     As String
     Dim i           As Integer
-
-    LocalFile = App.Path & "\Init\" & VersionInfoINI
 
     '¿Existe el archivo de versiones en el directorio local?
     If Not FileExist(LocalFile, vbArchive) Then
@@ -64,12 +60,13 @@ Public Sub CargarListasLOCAL()
     UpdateLocal.updateNumber = Val(GetVar(LocalFile, "MANIFEST", "UPDATENUMBER"))
     UpdateLocal.TotalFiles = Val(GetVar(LocalFile, "MANIFEST", "TOTALFILES"))
     UpdateLocal.TotalCarpetas = Val(GetVar(LocalFile, "MANIFEST", "TOTALCARPETAS"))
+    UpdateLocal.LauncherCheck = GetVar(LocalFile, "MANIFEST", "CHECK")
 
     ReDim UpdateLocal.Archivos(1 To UpdateLocal.TotalFiles) As tArchivos
 
     For i = 1 To UpdateLocal.TotalFiles
 
-        UpdateLocal.Archivos(i).archivo = GetVar(LocalFile, "A" & i, "ARCHIVO")
+        UpdateLocal.Archivos(i).Archivo = GetVar(LocalFile, "A" & i, "ARCHIVO")
         UpdateLocal.Archivos(i).md5 = UCase(GetVar(LocalFile, "A" & i, "CHECK"))
 
     Next i
@@ -92,7 +89,7 @@ Public Sub CargarListasREMOTE()
 '********************************************
 
     Dim responseServer  As String
-    Dim archivo         As String
+    Dim Archivo         As String
     Dim i               As Integer
 
     Set Inet = New clsInet
@@ -106,12 +103,13 @@ Public Sub CargarListasREMOTE()
     updateREMOTE.updateNumber = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("UPDATENUMBER"))
     updateREMOTE.TotalFiles = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALFILES"))
     updateREMOTE.TotalCarpetas = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALCARPETAS"))
+    updateREMOTE.LauncherCheck = updateREMOTE.JsonListas.Item("MANIFEST").Item("CHECK")
 
     ReDim updateREMOTE.Archivos(1 To updateREMOTE.TotalFiles) As tArchivos
 
     For i = 1 To updateREMOTE.TotalFiles
 
-        updateREMOTE.Archivos(i).archivo = updateREMOTE.JsonListas.Item("A" & i).Item("ARCHIVO")
+        updateREMOTE.Archivos(i).Archivo = updateREMOTE.JsonListas.Item("A" & i).Item("ARCHIVO")
         updateREMOTE.Archivos(i).md5 = UCase(updateREMOTE.JsonListas.Item("A" & i).Item("CHECK"))
 
     Next i
@@ -153,7 +151,7 @@ Public Function CompararArchivos() As Boolean
 
     Dim i               As Integer
     Dim flag            As Boolean
-    Dim archivo         As String
+    Dim Archivo         As String
 
     'El total de archivos remoto es diferente al de local? 'Hay que actualizar seguro.
     If updateREMOTE.TotalFiles <> UpdateLocal.TotalFiles Then
@@ -163,17 +161,18 @@ Public Function CompararArchivos() As Boolean
 
     For i = 1 To updateREMOTE.TotalFiles
 
-        archivo = Replace$(updateREMOTE.Archivos(i).archivo, "-", "\")
+        Archivo = Replace$(updateREMOTE.Archivos(i).Archivo, "-", "\")
         'Comprobamos todos los CHECK
-        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & archivo, vbNormal) = False Then
+        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & Archivo, vbNormal) = False Then
 
-            ReDim Preserve ListaActualizar(Desactualizados + 1) As String
+            ReDim Preserve DesactualizadosList(Desactualizados + 1) As tArchivos
 
             'Aumentamos el contador de la cantidad de archivos para actualizar
             Desactualizados = Desactualizados + 1
 
             'Añadimos el archivo a la lista para actualizar mas tarde
-            ListaActualizar(Desactualizados) = updateREMOTE.Archivos(i).archivo
+            DesactualizadosList(Desactualizados).Archivo = updateREMOTE.Archivos(i).Archivo
+            DesactualizadosList(Desactualizados).md5 = updateREMOTE.Archivos(i).md5
 
             flag = True 'Activamos el flag
         End If
@@ -223,25 +222,31 @@ Public Function ActualizarCliente() As Boolean
 '********************************************
 
     Dim i As Integer
-    Dim archivo As String
+    Dim Archivo As String
     Dim archivoURL As String
 
-    For i = 1 To Desactualizados
-
-        'Primero lo adaptamos a URL
-        archivoURL = Replace$(ListaActualizar(i), "-", "/")
-
-        'Luego a directorio de Windows
-        archivo = Replace$(ListaActualizar(i), "-", "\")
-        
-        frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "cliente/" & archivoURL, archivo
+    If LauncherDesactualizado Then
+        frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "launcher/WinterAOLauncher.exe.up", "WinterAOLauncher.exe.up"
 
         DoEvents
-
-    Next i
+    End If
     
-    'Esto se tiene que mejorar
-    'frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "VersionInfo.json", App.Path & "\INIT\VersionInfo.json"
+    If Desactualizados > 0 Then
+        For i = 1 To Desactualizados
+    
+            'Primero lo adaptamos a URL
+            archivoURL = Replace$(DesactualizadosList(i).Archivo, "-", "/")
+    
+            'Luego a directorio de Windows
+            Archivo = Replace$(DesactualizadosList(i).Archivo, "-", "\")
+            
+            frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "cliente/" & archivoURL, Archivo
+    
+            DoEvents
+    
+        Next i
+
+    End If
     
     If SinVersiones Then Call ObtenerVersionFile
     
@@ -250,12 +255,15 @@ Public Function ActualizarCliente() As Boolean
 End Function
 
 Private Sub ObtenerVersionFile()
+'********************************************
+'Autor: Lorwik
+'Fecha: 25/09/2020
+'Descripción: Descarga el archivo de VersionInfo y lo transforma al ini del cliente
+'********************************************
+
     On Error Resume Next
     
-    Dim LocalFile As String
     Dim i As Integer
-    
-    LocalFile = App.Path & "\Init\" & VersionInfoINI
     
     With updateREMOTE
 
@@ -265,7 +273,7 @@ Private Sub ObtenerVersionFile()
         
         For i = 1 To .TotalFiles
         
-            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", .Archivos(i).archivo)
+            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", .Archivos(i).Archivo)
             Call WriteVar(LocalFile, "A" & i, "CHECK", .Archivos(i).md5)
         
         Next i

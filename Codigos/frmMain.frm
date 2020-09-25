@@ -100,10 +100,10 @@ Begin VB.Form frmMain
       BackStyle       =   0  'Transparent
       Caption         =   "Cargando..."
       ForeColor       =   &H00FFFFFF&
-      Height          =   195
+      Height          =   2955
       Left            =   6360
       TabIndex        =   0
-      Top             =   3120
+      Top             =   3000
       Width           =   4365
    End
 End
@@ -120,22 +120,25 @@ End Sub
 
 Private Sub cmdJugar_Click()
         
-    If ActualizacionesPendientes Then
+    '¿Hay actualizaciones pendienteS?
+    If ActualizacionesPendientes Or LauncherDesactualizado Then
         ModUpdate.ActualizarCliente
         
-    Else
-        If Len(Fallaron) > 0 Then
+    Else 'Si esta todo actualizado...
+    
+        If Len(Fallaron) > 0 Then '¿Se actualizo antes? ¿Hubo fallos?
             MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
             
-        Else
-            If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then
+        Else 'Si todo esta OK, lanzamos el juego
+        
+            If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then '¿Existe el .exe del cliente?
                 Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
                 DoEvents
                 Call Shell(App.Path & "\WinterAO Resurrection.exe", vbNormalFocus)
                 End
                 
-            Else
-                MsgBox "No se encontro el ejecutable del juego ""0Winter AO Ultimate.EXE""."
+            Else 'Si no existe, no podemos lanzar nada
+                MsgBox "No se encontro el ejecutable del juego ""Winter AO Ultimate.EXE""."
                 
             End If
             

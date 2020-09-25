@@ -30,22 +30,37 @@ Public Sub Main()
         
         Desactualizados = updateREMOTE.TotalFiles
         
-        ReDim Preserve ListaActualizar(Desactualizados) As String
+        ReDim Preserve DesactualizadosList(Desactualizados) As tArchivos
         
         For i = 1 To Desactualizados
             'Añadimos el archivo a la lista para actualizar mas tarde
-            ListaActualizar(i) = updateREMOTE.Archivos(i).archivo
+            DesactualizadosList(i).Archivo = updateREMOTE.Archivos(i).Archivo
+            DesactualizadosList(i).md5 = updateREMOTE.Archivos(i).md5
         Next i
         
         frmMain.lblPendientes.Caption = "¡No se ha encontrado el cliente! Pulsa Jugar para descargar los archivos del cliente."
+        Call LauncherLog("¡No se ha encontrado el cliente!")
         
     Else
+        '¿Hay actualizaciones pendientes?
         ActualizacionesPendientes = ModUpdate.CompararArchivos
         
+        '¿Hay actualizaciones para el Launcher?
+        If UpdateLocal.LauncherCheck <> updateREMOTE.LauncherCheck Then _
+            LauncherDesactualizado = True
+        
+        'Notificamos en el Main que hay actualizaciones pendientes
         If ActualizacionesPendientes Then
             frmMain.lblPendientes.Caption = "Hay " & Desactualizados & " archivos desactualizados."
+            Call LauncherLog("Hay " & Desactualizados & " archivos desactualizados.")
+            
+        ElseIf LauncherDesactualizado Then
+            frmMain.lblPendientes.Caption = "Hay una actualizacion disponible para el Launcher."
+            Call LauncherLog("Hay una actualizacion disponible para el Launcher.")
+            
         Else
             frmMain.lblPendientes.Caption = "Cliente actualizado. Pulsa Jugar para abrir el cliente."
+            
         End If
     End If
     
@@ -127,3 +142,51 @@ Public Sub Skin(Frm As Form, Color As Long)
     SetWindowLong Frm.hwnd, G_E, Ret
     SetLayeredWindowAttributes Frm.hwnd, Color, 0, LW_KEY
 End Sub
+
+Public Sub LauncherLog(Desc As String)
+    '***************************************************
+    'Author: Lorwik
+    'Last Modification: 25/09/2020
+    '***************************************************
+
+    On Error GoTo errHandler
+
+    Dim nfile As Integer
+        nfile = FreeFile ' obtenemos un canal
+    
+    Open App.Path & "\logs\launcher.log" For Append Shared As #nfile
+        Print #nfile, Date & " " & Time & " " & Desc
+    Close #nfile
+    
+    Exit Sub
+    
+    Debug.Print Desc
+    
+errHandler:
+
+End Sub
+
+Public Sub ActualizarVersionInfo(ByVal Archivo As String, ByVal Check As String)
+'********************************************
+'Autor: Lorwik
+'Fecha: 25/09/2020
+'Descripción: Actualiza el archivo de versiones local
+'********************************************
+
+    Dim i As Integer
+    
+    For i = 1 To updateREMOTE.TotalFiles
+    
+        '¿Encontro el archivo?
+        If updateREMOTE.Archivos(i).Archivo = Archivo Then
+        
+            'Actualizamos el archivo de versiones
+            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", Archivo)
+            Call WriteVar(LocalFile, "A" & i, "CHECK", Check)
+            
+        End If
+    
+    Next i
+
+End Sub
+
