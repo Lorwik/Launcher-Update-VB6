@@ -4,7 +4,8 @@ Option Explicit
 Public Inet As clsInet
 
 Private Const URLUpdate As String = "http://winterao.com.ar/update/"
-Private Const VersionInfoFile As String = "VersionInfo.json"
+Private Const VersionInfoJSON As String = "VersionInfo.json"
+Private Const VersionInfoINI As String = "VersionInfo.ini"
 
 Type tArchivos
     md5 As String
@@ -49,11 +50,10 @@ Public Sub CargarListasLOCAL()
 '********************************************
 
     Dim archivo     As String
-    Dim FileVer     As String
     Dim LocalFile   As String
     Dim i           As Integer
 
-    LocalFile = App.Path & "\Init\" & VersionInfoFile
+    LocalFile = App.Path & "\Init\" & VersionInfoINI
 
     '¿Existe el archivo de versiones en el directorio local?
     If Not FileExist(LocalFile, vbArchive) Then
@@ -61,20 +61,16 @@ Public Sub CargarListasLOCAL()
         Exit Sub
     End If
 
-    FileVer = FileToString(LocalFile)
-
-    Set UpdateLocal.JsonListas = ModJson.parse(FileVer)
-
-    UpdateLocal.updateNumber = Val(UpdateLocal.JsonListas.Item("MANIFEST").Item("UPDATENUMBER"))
-    UpdateLocal.TotalFiles = Val(UpdateLocal.JsonListas.Item("MANIFEST").Item("TOTALFILES"))
-    UpdateLocal.TotalCarpetas = Val(UpdateLocal.JsonListas.Item("MANIFEST").Item("TOTALCARPETAS"))
+    UpdateLocal.updateNumber = Val(GetVar(LocalFile, "MANIFEST", "UPDATENUMBER"))
+    UpdateLocal.TotalFiles = Val(GetVar(LocalFile, "MANIFEST", "TOTALFILES"))
+    UpdateLocal.TotalCarpetas = Val(GetVar(LocalFile, "MANIFEST", "TOTALCARPETAS"))
 
     ReDim UpdateLocal.Archivos(1 To UpdateLocal.TotalFiles) As tArchivos
 
     For i = 1 To UpdateLocal.TotalFiles
 
-        UpdateLocal.Archivos(i).archivo = UpdateLocal.JsonListas.Item("A" & i).Item("ARCHIVO")
-        UpdateLocal.Archivos(i).md5 = UCase(UpdateLocal.JsonListas.Item("A" & i).Item("CHECK"))
+        UpdateLocal.Archivos(i).archivo = GetVar(LocalFile, "A" & i, "ARCHIVO")
+        UpdateLocal.Archivos(i).md5 = UCase(GetVar(LocalFile, "A" & i, "CHECK"))
 
     Next i
 
@@ -82,7 +78,7 @@ Public Sub CargarListasLOCAL()
 
     For i = 1 To UpdateLocal.TotalCarpetas
 
-        UpdateLocal.Carpetas(i) = UpdateLocal.JsonListas.Item("C" & i).Item("CARPETA")
+        UpdateLocal.Carpetas(i) = GetVar(LocalFile, "C" & i, "CARPETA")
 
     Next i
 
@@ -101,7 +97,7 @@ Public Sub CargarListasREMOTE()
 
     Set Inet = New clsInet
 
-    responseServer = Inet.OpenRequest(URLUpdate & VersionInfoFile, "GET")
+    responseServer = Inet.OpenRequest(URLUpdate & VersionInfoJSON, "GET")
     responseServer = Inet.Execute
     responseServer = Inet.GetResponseAsString
 
@@ -245,8 +241,41 @@ Public Function ActualizarCliente() As Boolean
     Next i
     
     'Esto se tiene que mejorar
-    frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "VersionInfo.json", App.Path & "\INIT\VersionInfo.json"
+    'frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "VersionInfo.json", App.Path & "\INIT\VersionInfo.json"
+    
+    If SinVersiones Then Call ObtenerVersionFile
     
     ActualizacionesPendientes = False
 
 End Function
+
+Private Sub ObtenerVersionFile()
+    On Error Resume Next
+    
+    Dim LocalFile As String
+    Dim i As Integer
+    
+    LocalFile = App.Path & "\Init\" & VersionInfoINI
+    
+    With updateREMOTE
+
+        Call WriteVar(LocalFile, "MANIFEST", "UPDATENUMBER", .updateNumber)
+        Call WriteVar(LocalFile, "MANIFEST", "TOTALFILES", .TotalFiles)
+        Call WriteVar(LocalFile, "MANIFEST", "TOTALCARPETAS", .TotalCarpetas)
+        
+        For i = 1 To .TotalFiles
+        
+            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", .Archivos(i).archivo)
+            Call WriteVar(LocalFile, "A" & i, "CHECK", .Archivos(i).md5)
+        
+        Next i
+        
+        For i = 1 To .TotalCarpetas
+        
+            Call WriteVar(LocalFile, "C" & i, "ARCHIVO", .Carpetas(i))
+        
+        Next i
+    
+    End With
+    
+End Sub
