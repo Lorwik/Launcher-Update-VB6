@@ -131,14 +131,14 @@ Private Sub cmdJugar_Click()
             
         Else 'Si todo esta OK, lanzamos el juego
         
-            If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then '¿Existe el .exe del cliente?
+            If FileExist(App.Path & "\WinterAOResurrection.exe", vbNormal) Then '¿Existe el .exe del cliente?
                 Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
                 DoEvents
-                Call Shell(App.Path & "\WinterAO Resurrection.exe", vbNormalFocus)
+                Call Shell(App.Path & "\WinterAOResurrection.exe", vbNormalFocus)
                 End
                 
             Else 'Si no existe, no podemos lanzar nada
-                MsgBox "No se encontro el ejecutable del juego ""Winter AO Ultimate.EXE""."
+                MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
                 
             End If
             

@@ -226,9 +226,11 @@ Public Function ActualizarCliente() As Boolean
     Dim archivoURL As String
 
     If LauncherDesactualizado Then
+        If FileExist(App.Path & "\WinterAOLauncher.exe.up", vbNormal) Then Kill App.Path & "\WinterAOLauncher.exe.up"
         frmMain.ucAsyncDLHost.AddDownloadJob URLUpdate & "launcher/WinterAOLauncher.exe.up", "WinterAOLauncher.exe.up"
 
         DoEvents
+        LauncherDesactualizado = False
     End If
     
     If Desactualizados > 0 Then
@@ -270,6 +272,7 @@ Private Sub ObtenerVersionFile()
         Call WriteVar(LocalFile, "MANIFEST", "UPDATENUMBER", .updateNumber)
         Call WriteVar(LocalFile, "MANIFEST", "TOTALFILES", .TotalFiles)
         Call WriteVar(LocalFile, "MANIFEST", "TOTALCARPETAS", .TotalCarpetas)
+        Call WriteVar(LocalFile, "MANIFEST", "CHECK", .LauncherCheck)
         
         For i = 1 To .TotalFiles
         

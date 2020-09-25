@@ -9,9 +9,10 @@ Codigo/*.log
 *.lvw
 *.OBJ
 INIT/Config.ini
-INIT/InfoVersion.json
+INIT/InfoVersion.ini
 Recursos/*
-WinterAO Resurrection.exe
+Init/BindKeys.bin
+WinterAOResurrection.exe
 AdminLibSetup.exe
 
 # System Files.
