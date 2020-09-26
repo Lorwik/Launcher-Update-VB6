@@ -162,18 +162,10 @@ Public Function CompararArchivos() As Boolean
 
     For i = 1 To updateREMOTE.TotalFiles
 
-        Archivo = Replace$(updateREMOTE.Archivos(i).Archivo, "-", "\")
         'Comprobamos todos los CHECK
-        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & Archivo, vbNormal) = False Then
+        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & updateREMOTE.Archivos(i).Archivo, vbNormal) = False Then
 
-            ReDim Preserve DesactualizadosList(Desactualizados + 1) As tArchivos
-
-            'Aumentamos el contador de la cantidad de archivos para actualizar
-            Desactualizados = Desactualizados + 1
-
-            'Añadimos el archivo a la lista para actualizar mas tarde
-            DesactualizadosList(Desactualizados).Archivo = updateREMOTE.Archivos(i).Archivo
-            DesactualizadosList(Desactualizados).md5 = updateREMOTE.Archivos(i).md5
+            Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
 
             flag = True 'Activamos el flag
         End If
@@ -198,15 +190,12 @@ Public Sub CompararyCrearCarpetas()
     On Error Resume Next
 
     Dim i As Integer
-    Dim Directorio As String
 
     For i = 1 To updateREMOTE.TotalCarpetas
 
-        Directorio = Replace(updateREMOTE.Carpetas(i), "-", "\")
+        If Not FileExist(App.Path & "\" & updateREMOTE.Carpetas(i), vbDirectory) Then
 
-        If Not FileExist(App.Path & Directorio, vbDirectory) Then
-
-            MkDir Directorio
+            MkDir App.Path & "\" & updateREMOTE.Carpetas(i)
             DoEvents
 
         End If
@@ -236,13 +225,10 @@ Public Function ActualizarCliente() As Boolean
     If Desactualizados > 0 Then
         For i = 1 To Desactualizados
     
-            'Primero lo adaptamos a URL
-            archivoURL = Replace$(DesactualizadosList(i).Archivo, "-", "/")
-    
-            'Luego a directorio de Windows
-            Archivo = Replace$(DesactualizadosList(i).Archivo, "-", "\")
+            'Lo adaptamos a URL
+            archivoURL = Replace$(DesactualizadosList(i).Archivo, "\\", "/")
             
-            frmMain.ucAsyncDLHost.AddDownloadJob URLUPDATE & "cliente/" & archivoURL, Archivo
+            frmMain.ucAsyncDLHost.AddDownloadJob URLUPDATE & "cliente/" & archivoURL, DesactualizadosList(i).Archivo
     
             DoEvents
     
@@ -289,4 +275,31 @@ Private Sub ObtenerVersionFile()
     
     End With
     
+End Sub
+
+Public Sub NuevoDesactualizado(ByVal File As String, ByVal Checksum As String)
+'********************************************
+'Autor: Lorwik
+'Fecha: 26/09/2020
+'Descripción: Añade un elemento a la lista de desactualizados
+'********************************************
+
+    Dim i As Integer
+    
+    'Si ya existe el archivo en la lista de desactualizados, no lo agregamos
+    If Desactualizados > 0 Then
+        For i = 1 To Desactualizados
+            If DesactualizadosList(i).Archivo = File Then Exit Sub
+        Next i
+    End If
+
+    ReDim Preserve DesactualizadosList(Desactualizados + 1) As tArchivos
+
+    'Aumentamos el contador de la cantidad de archivos para actualizar
+    Desactualizados = Desactualizados + 1
+
+    'Añadimos el archivo a la lista para actualizar mas tarde
+    DesactualizadosList(Desactualizados).Archivo = File
+    DesactualizadosList(Desactualizados).md5 = Checksum
+            
 End Sub

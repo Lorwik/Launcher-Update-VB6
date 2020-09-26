@@ -32,8 +32,8 @@ Begin VB.Form frmMain
       TabIndex        =   1
       Top             =   2700
       Width           =   4815
-      _extentx        =   8493
-      _extenty        =   5318
+      _ExtentX        =   8493
+      _ExtentY        =   5318
    End
    Begin VB.Label lblVersion 
       Alignment       =   2  'Center
@@ -93,8 +93,8 @@ Begin VB.Form frmMain
       Top             =   3000
       Visible         =   0   'False
       Width           =   3255
-      _extentx        =   5741
-      _extenty        =   661
+      _ExtentX        =   5741
+      _ExtentY        =   661
    End
    Begin VB.Label lblPendientes 
       BackStyle       =   0  'Transparent
@@ -122,7 +122,9 @@ End Sub
 
 Private Sub cmdJugar_Click()
         
-    '¿Hay actualizaciones pendienteS?
+    Dim Integridad As Integer
+    
+    '¿Hay actualizaciones pendientes?
     If ActualizacionesPendientes Or LauncherDesactualizado Then
         ModUpdate.ActualizarCliente
         
@@ -130,18 +132,30 @@ Private Sub cmdJugar_Click()
     
         If Len(Fallaron) > 0 Then '¿Se actualizo antes? ¿Hubo fallos?
             MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
+            frmMain.lblPendientes = "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
             
         Else 'Si todo esta OK, lanzamos el juego
         
-            If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
-                Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
-                DoEvents
-                Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
-                End
+            'Ante de lanzar el cliente vamos a verificar todos los archivos
+            Integridad = ComprobarIntegridad
+        
+            If Integridad <> 0 Then
                 
-            Else 'Si no existe, no podemos lanzar nada
-                MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
+                MsgBox "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
+                frmMain.lblPendientes = "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
                 
+            Else
+        
+                If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
+                    Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
+                    DoEvents
+                    Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
+                    End
+                    
+                Else 'Si no existe, no podemos lanzar nada
+                    MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
+                    
+                End If
             End If
             
         End If
@@ -195,8 +209,13 @@ Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpF
         
     End If
     
-    If finalizados >= Desactualizados Then _
+    If finalizados >= Desactualizados Then
         frmMain.lblPendientes.Caption = "Cliente actualizado."
+        
+        Desactualizados = 0
+        ReDim DesactualizadosList(Desactualizados) As tArchivos
+        
+    End If
   
 End Sub
  

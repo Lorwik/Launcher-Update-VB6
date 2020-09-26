@@ -13,6 +13,7 @@ Private Function MD5String(ByVal p As String) As String
 End Function
  
 Private Function MD5File(ByVal f As String) As String
+
     Dim r As String * 32
     r = Space(32)
     MDFile f, r
@@ -20,6 +21,12 @@ Private Function MD5File(ByVal f As String) As String
 End Function
 
 Public Function ComprobarHash(ByVal File As String) As Boolean
+'***************************************************
+'Autor: Lorwik
+'Fecha: 26/06/2020
+'Descripcion: Comprueba la integridad de un archivo recientemente descargado
+'***************************************************
+
     Dim i As Integer
     Dim Encontrado As Integer
     Dim Hash As String
@@ -54,7 +61,7 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
     '********************************************
     
     For i = 1 To Desactualizados
-        If DesactualizadosList(i).Archivo = Replace$(File, "\", "-") Then
+        If DesactualizadosList(i).Archivo = File Then
             Encontrado = i
             Exit For
         End If
@@ -86,4 +93,30 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
         Exit Function
     End If
 
+End Function
+
+Public Function ComprobarIntegridad() As Integer
+'***************************************************
+'Autor: Lorwik
+'Fecha: 26/06/2020
+'Descripcion: Comprueba la integridad de los archivos existente con la version Local
+'***************************************************
+
+    Dim i As Integer
+    Dim Count As Integer
+    
+    For i = 1 To UpdateLocal.TotalFiles
+    
+        '¿El MD5 guardado en local NO coincide con el obtenido del archivo?
+        If UCase(UpdateLocal.Archivos(i).md5) <> UCase(MD5File(UpdateLocal.Archivos(i).Archivo)) Then
+
+            Call NuevoDesactualizado(UpdateLocal.Archivos(i).Archivo, UpdateLocal.Archivos(i).md5)
+            Count = Count + 1 'Llevamos el control de archivos que no se pudieron comprobar
+            ActualizacionesPendientes = True
+        End If
+    
+    Next i
+    
+    ComprobarIntegridad = Count
+    
 End Function

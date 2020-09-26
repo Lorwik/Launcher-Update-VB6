@@ -28,20 +28,17 @@ Public Sub Main()
     If SinVersiones Then
         ActualizacionesPendientes = True
         
-        Desactualizados = updateREMOTE.TotalFiles
+        For i = 1 To updateREMOTE.TotalFiles
         
-        ReDim Preserve DesactualizadosList(Desactualizados) As tArchivos
+            Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
         
-        For i = 1 To Desactualizados
-            'Añadimos el archivo a la lista para actualizar mas tarde
-            DesactualizadosList(i).Archivo = updateREMOTE.Archivos(i).Archivo
-            DesactualizadosList(i).md5 = updateREMOTE.Archivos(i).md5
         Next i
         
         frmMain.lblPendientes.Caption = "¡No se ha encontrado el cliente! Pulsa Jugar para descargar los archivos del cliente."
         Call LauncherLog("¡No se ha encontrado el cliente!")
         
     Else
+    
         '¿Hay actualizaciones pendientes?
         ActualizacionesPendientes = ModUpdate.CompararArchivos
         
@@ -183,6 +180,9 @@ Public Sub ActualizarVersionInfo(ByVal Archivo As String, ByVal Check As String)
             'Actualizamos el archivo de versiones
             Call WriteVar(LocalFile, "A" & i, "ARCHIVO", Archivo)
             Call WriteVar(LocalFile, "A" & i, "CHECK", Check)
+            
+            UpdateLocal.Archivos(i).Archivo = updateREMOTE.Archivos(i).Archivo
+            UpdateLocal.Archivos(i).md5 = updateREMOTE.Archivos(i).md5
             
         End If
     
