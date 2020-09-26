@@ -1,10 +1,13 @@
 [History]
-1=#P0#=mb	#P1#=cmdJugar_Click	#P2#=WinterLauncher/frmMain/cmdJugar_Click	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200917221725	#P7#=0	#P8#=-2	.
-2=#P0#=mb	#P1#=Skin	#P2#=WinterLauncher/frmMain/Skin	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200917221723	#P7#=0	#P8#=7	.
-3=#P0#=mb	#P1#=Form_Load	#P2#=WinterLauncher/frmMain/Form_Load	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200917221721	#P7#=0	#P8#=2	.
-4=#P0#=mb	#P1#=cmdSalir_Click	#P2#=WinterLauncher/frmMain/cmdSalir_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200917214718	#P7#=0	#P8#=4	.
-5=#P0#=mb	#P1#=Main	#P2#=WinterLauncher/modGeneral/Main	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200917214327	#P7#=0	#P8#=31	.
-6=#P0#=mb	#P1#=WriteVar	#P2#=WinterLauncher/modGeneral/WriteVar	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200917164152	#P7#=0	#P8#=-1	.
-7=#P0#=mb	#P1#=ReadField	#P2#=WinterLauncher/modGeneral/ReadField	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200917164056	#P7#=0	#P8#=6	.
-8=#P0#=mb	#P1#=RStoJSON	#P2#=WinterLauncher/ModJson/RStoJSON	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200917163114	#P7#=0	#P8#=0	.
-9=#P0#=mb	#P1#=FileExist	#P2#=WinterLauncher/modGeneral/FileExist	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200916194527	#P7#=0	#P8#=0	.
+1=#P0#=mb	#P1#=ucAsyncDLHost_DownloadComplete	#P2#=WinterAOLauncher/frmMain/ucAsyncDLHost_DownloadComplete	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200926211925	#P7#=0	#P8#=16	.
+2=#P0#=mb	#P1#=ActualizarCliente	#P2#=WinterAOLauncher/ModUpdate/ActualizarCliente	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926211858	#P7#=0	#P8#=34	.
+3=#P0#=mb	#P1#=cmdJugar_Click	#P2#=WinterAOLauncher/frmMain/cmdJugar_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20200926211517	#P7#=0	#P8#=29	.
+4=#P0#=mb	#P1#=ActualizarVersionInfo	#P2#=WinterAOLauncher/modGeneral/ActualizarVersionInfo	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926211139	#P7#=0	#P8#=17	.
+5=#P0#=mb	#P1#=NuevoDesactualizado	#P2#=WinterAOLauncher/ModUpdate/NuevoDesactualizado	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926211010	#P7#=0	#P8#=6	.
+6=#P0#=mb	#P1#=ComprobarIntegridad	#P2#=WinterAOLauncher/modCripto/ComprobarIntegridad	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926210348	#P7#=0	#P8#=17	.
+7=#P0#=mb	#P1#=Main	#P2#=WinterAOLauncher/modGeneral/Main	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926205847	#P7#=0	#P8#=15	.
+8=#P0#=mb	#P1#=ComprobarHash	#P2#=WinterAOLauncher/modCripto/ComprobarHash	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926205840	#P7#=0	#P8#=14	.
+9=#P0#=mb	#P1#=CompararyCrearCarpetas	#P2#=WinterAOLauncher/ModUpdate/CompararyCrearCarpetas	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926205532	#P7#=0	#P8#=1	.
+10=#P0#=mb	#P1#=CompararArchivos	#P2#=WinterAOLauncher/ModUpdate/CompararArchivos	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926205225	#P7#=0	#P8#=10	.
+11=#P0#=mb	#P1#=MD5File	#P2#=WinterAOLauncher/modCripto/MD5File	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926205004	#P7#=0	#P8#=1	.
+12=#P0#=mb	#P1#=ObtenerVersionFile	#P2#=WinterAOLauncher/ModUpdate/ObtenerVersionFile	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20200926203853	#P7#=0	#P8#=27	.

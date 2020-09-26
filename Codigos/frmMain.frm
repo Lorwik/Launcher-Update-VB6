@@ -1,12 +1,11 @@
 VERSION 5.00
-Object = "{48E59290-9880-11CF-9754-00AA00C00908}#1.0#0"; "MSINET.ocx"
 Begin VB.Form frmMain 
    BorderStyle     =   0  'None
-   Caption         =   "WinterAO Resurrection - Launcher"
-   ClientHeight    =   7545
-   ClientLeft      =   0
-   ClientTop       =   0
-   ClientWidth     =   11295
+   Caption         =   "WinterAO Launcher"
+   ClientHeight    =   7680
+   ClientLeft      =   -60
+   ClientTop       =   -30
+   ClientWidth     =   11400
    ControlBox      =   0   'False
    BeginProperty Font 
       Name            =   "Tahoma"
@@ -22,40 +21,90 @@ Begin VB.Form frmMain
    MaxButton       =   0   'False
    MinButton       =   0   'False
    Picture         =   "frmMain.frx":1A041
-   ScaleHeight     =   7545
-   ScaleWidth      =   11295
+   ScaleHeight     =   512
+   ScaleMode       =   3  'Pixel
+   ScaleWidth      =   760
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
-   Begin InetCtlsObjects.Inet Inet1 
-      Left            =   360
-      Top             =   240
-      _ExtentX        =   1005
-      _ExtentY        =   1005
-      _Version        =   393216
+   Begin WinterAOLauncher.ucAsyncDLHost ucAsyncDLHost 
+      Height          =   3615
+      Left            =   6100
+      TabIndex        =   1
+      Top             =   2700
+      Width           =   4815
+      _ExtentX        =   8493
+      _ExtentY        =   5318
+   End
+   Begin VB.Label lblVersion 
+      Alignment       =   2  'Center
+      BackStyle       =   0  'Transparent
+      Caption         =   "#0"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   195
+      Left            =   480
+      TabIndex        =   3
+      Top             =   6510
+      Width           =   570
+   End
+   Begin VB.Shape Shape1 
+      BackColor       =   &H00000000&
+      BackStyle       =   1  'Opaque
+      BorderColor     =   &H00404040&
+      Height          =   255
+      Left            =   480
+      Shape           =   4  'Rounded Rectangle
+      Top             =   6480
+      Width           =   615
+   End
+   Begin VB.Image imgOpciones 
+      Height          =   690
+      Left            =   5520
+      Picture         =   "frmMain.frx":4A1B5
+      Top             =   6790
+      Width           =   2250
    End
    Begin VB.Image cmdSalir 
       Height          =   285
-      Left            =   10440
-      Picture         =   "frmMain.frx":4A85A
-      Top             =   600
+      Left            =   10560
+      Picture         =   "frmMain.frx":4BED7
+      Top             =   1080
       Width           =   240
    End
    Begin VB.Image cmdJugar 
       Height          =   930
-      Left            =   7560
-      Picture         =   "frmMain.frx":4A90F
+      Left            =   7800
+      Picture         =   "frmMain.frx":4BF8C
       Top             =   6600
       Width           =   3030
    End
+   Begin WinterAOLauncher.ucAsyncDLStripe ucAsyncDLStripe 
+      Height          =   375
+      Left            =   7200
+      TabIndex        =   2
+      Top             =   3000
+      Visible         =   0   'False
+      Width           =   3255
+      _ExtentX        =   5741
+      _ExtentY        =   661
+   End
    Begin VB.Label lblPendientes 
       BackStyle       =   0  'Transparent
-      Caption         =   "Actualizaciones pendientes: "
+      Caption         =   "Cargando..."
       ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Left            =   600
+      Height          =   2955
+      Left            =   6360
       TabIndex        =   0
-      Top             =   4560
-      Width           =   9960
+      Top             =   3000
+      Width           =   4365
    End
 End
 Attribute VB_Name = "frmMain"
@@ -65,15 +114,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
-Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
-Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
-Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
-Const LW_KEY = &H1
-Const G_E = (-20)
-Const W_E = &H80000
+Private Const CLIENTEXE As String = "\WinterAOResurrection.exe"
 
 Private Sub Form_Load()
     Skin Me, vbRed
@@ -81,16 +122,42 @@ End Sub
 
 Private Sub cmdJugar_Click()
         
-    If ActualizacionesPendientes Then
+    Dim Integridad As Integer
+    
+    '¿Hay actualizaciones pendientes?
+    If ActualizacionesPendientes Or LauncherDesactualizado Then
         ModUpdate.ActualizarCliente
-    Else
-        If FileExist(App.Path & "\WinterAO Resurrection.exe", vbNormal) Then
-            DoEvents
-            Call Shell(App.Path & "\WinterAO Resurrection.exe", vbNormalFocus)
-            End
-        Else
-            MsgBox "No se encontro el ejecutable del juego ""0Winter AO Ultimate.EXE""."
-            End
+        
+    Else 'Si esta todo actualizado...
+    
+        If Len(Fallaron) > 0 Then '¿Se actualizo antes? ¿Hubo fallos?
+            MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
+            frmMain.lblPendientes = "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
+            
+        Else 'Si todo esta OK, lanzamos el juego
+        
+            'Ante de lanzar el cliente vamos a verificar todos los archivos
+            Integridad = ComprobarIntegridad
+        
+            If Integridad <> 0 Then
+                
+                MsgBox "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
+                frmMain.lblPendientes = "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
+                
+            Else
+        
+                If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
+                    Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
+                    DoEvents
+                    Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
+                    End
+                    
+                Else 'Si no existe, no podemos lanzar nada
+                    MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
+                    
+                End If
+            End If
+            
         End If
     End If
         
@@ -100,11 +167,68 @@ Private Sub cmdSalir_Click()
     End
 End Sub
 
-Sub Skin(Frm As Form, Color As Long)
-    Frm.BackColor = Color
-    Dim Ret As Long
-    Ret = GetWindowLong(Frm.hwnd, G_E)
-    Ret = Ret Or W_E
-    SetWindowLong Frm.hwnd, G_E, Ret
-    SetLayeredWindowAttributes Frm.hwnd, Color, 0, LW_KEY
+Private Sub imgOpciones_Click()
+    frmOpciones.Show
 End Sub
+
+Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpFileName As String)
+'**********************************************************
+'Descripcion: Evento cuando termina una descarga
+'**********************************************************
+
+    Static finalizados As Integer
+
+    'Debug.Print "DownloadComplete for URL: "; Sender.URL & "; Directorio: " & Sender.LocalFileName
+    
+    'the complete-event delivers a temporary filename - it is up to the user
+    'of the Control, to decide what to do with this TmpFile... the usual reaction will be
+    'a simple File-Renaming (ensuring an implicit Move-Operation on the FileSystem then)
+    'the Sender is the Control-Stripe of our DownloadListHost-Control - and in the Add-methods
+    'in the Form-Load-Event above, we have defined a "target-LocalFilename" already, which is
+    'associated with the matching URL (which was the Source of this completed Download here)
+    'This target-filename is (so far) only stored as String within the Stripe (Sender.LocalFileName)
+    
+    'So, yeah - just ensure a proper Move/Rename of the delivered TmpFileName
+    
+    If FileExist(Sender.LocalFileName, vbNormal) Then Kill Sender.LocalFileName
+  
+    Name TmpFileName As Sender.LocalFileName
+    
+    
+    If Sender.LocalFileName <> LAUNCHEREXEUP Then
+        'Si el Hash no coincide...
+        If ComprobarHash(Sender.LocalFileName) = False Then _
+              Fallaron = Fallaron + Sender.LocalFileName & ", "
+        
+        finalizados = finalizados + 1
+        
+    Else 'Si es una actualizacion del Launcher...
+        
+        ComprobarHash (Sender.LocalFileName)
+        LauncherDesactualizado = False
+        
+    End If
+    
+    If finalizados >= Desactualizados Then
+        frmMain.lblPendientes.Caption = "Cliente actualizado."
+        
+        Desactualizados = 0
+        ReDim DesactualizadosList(Desactualizados) As tArchivos
+        
+    End If
+  
+End Sub
+ 
+Private Sub ucAsyncDLHost_DownloadProgress(Sender As ucAsyncDLStripe, ByVal BytesRead As Long, ByVal BytesTotal As Long)
+  Sender.Caption = FormatBytes2KBMBGBTB(BytesRead) & " (" & FormatDLRate(BytesRead, DateDiff("s", Sender.StartDate, Now)) & ")"
+End Sub
+
+Function FormatBytes2KBMBGBTB(ByVal Bytes As Currency) As String
+Dim i As Long
+  Do While Bytes >= 1024: Bytes = Bytes / 1024: i = i + 1: Loop
+  FormatBytes2KBMBGBTB = Int(Bytes * 10) / 10 & Split(",K,M,G,T", ",")(i) & "B"
+End Function
+
+Function FormatDLRate(ByVal Bytes As Long, ByVal Seconds As Long) As String
+  If Seconds Then FormatDLRate = FormatBytes2KBMBGBTB(Bytes \ Seconds) & "/s"
+End Function

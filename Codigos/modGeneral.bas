@@ -4,6 +4,16 @@ Option Explicit
 Public Declare Function writeprivateprofilestring Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpString As String, ByVal lpfilename As String) As Long
 Public Declare Function getprivateprofilestring Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpdefault As String, ByVal lpreturnedstring As String, ByVal nSize As Long, ByVal lpfilename As String) As Long
 
+Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hwnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+Const LW_KEY = &H1
+Const G_E = (-20)
+Const W_E = &H80000
+
 Public Sub Main()
     Dim i As Integer
 
@@ -18,26 +28,40 @@ Public Sub Main()
     If SinVersiones Then
         ActualizacionesPendientes = True
         
-        Desactualizados = TotalFilesREMOTE
+        For i = 1 To updateREMOTE.TotalFiles
         
-        ReDim Preserve ListaActualizar(Desactualizados) As String
+            Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
         
-        For i = 1 To Desactualizados
-            'Añadimos el archivo a la lista para actualizar mas tarde
-            ListaActualizar(i) = ArchivosREMOTE(i).archivo
         Next i
         
         frmMain.lblPendientes.Caption = "¡No se ha encontrado el cliente! Pulsa Jugar para descargar los archivos del cliente."
+        Call LauncherLog("¡No se ha encontrado el cliente!")
         
     Else
+    
+        '¿Hay actualizaciones pendientes?
         ActualizacionesPendientes = ModUpdate.CompararArchivos
         
+        '¿Hay actualizaciones para el Launcher?
+        If UpdateLocal.LauncherCheck <> updateREMOTE.LauncherCheck Then _
+            LauncherDesactualizado = True
+        
+        'Notificamos en el Main que hay actualizaciones pendientes
         If ActualizacionesPendientes Then
             frmMain.lblPendientes.Caption = "Hay " & Desactualizados & " archivos desactualizados."
+            Call LauncherLog("Hay " & Desactualizados & " archivos desactualizados.")
+            
+        ElseIf LauncherDesactualizado Then
+            frmMain.lblPendientes.Caption = "Hay una actualizacion disponible para el Launcher."
+            Call LauncherLog("Hay una actualizacion disponible para el Launcher.")
+            
         Else
             frmMain.lblPendientes.Caption = "Cliente actualizado. Pulsa Jugar para abrir el cliente."
+            
         End If
     End If
+    
+    frmMain.lblVersion.Caption = updateREMOTE.updateNumber
     
     DoEvents
     
@@ -106,3 +130,63 @@ Public Function FileToString(strFileName As String) As String
         FileToString = StrConv(InputB(LOF(IFile), IFile), vbUnicode)
     Close #IFile
 End Function
+
+Public Sub Skin(Frm As Form, Color As Long)
+    Frm.BackColor = Color
+    Dim Ret As Long
+    Ret = GetWindowLong(Frm.hwnd, G_E)
+    Ret = Ret Or W_E
+    SetWindowLong Frm.hwnd, G_E, Ret
+    SetLayeredWindowAttributes Frm.hwnd, Color, 0, LW_KEY
+End Sub
+
+Public Sub LauncherLog(Desc As String)
+    '***************************************************
+    'Author: Lorwik
+    'Last Modification: 25/09/2020
+    '***************************************************
+
+    On Error GoTo errhandler
+
+    Dim nfile As Integer
+        nfile = FreeFile ' obtenemos un canal
+    
+    Open App.Path & "\logs\launcher.log" For Append Shared As #nfile
+        Print #nfile, Date & " " & Time & " " & Desc
+    Close #nfile
+    
+    Exit Sub
+    
+    Debug.Print Desc
+    
+errhandler:
+
+End Sub
+
+Public Sub ActualizarVersionInfo(ByVal Archivo As String, ByVal Check As String)
+'********************************************
+'Autor: Lorwik
+'Fecha: 25/09/2020
+'Descripción: Actualiza el archivo de versiones local
+'********************************************
+
+    Dim i As Integer
+    
+    For i = 1 To updateREMOTE.TotalFiles
+    
+        '¿Encontro el archivo?
+        If updateREMOTE.Archivos(i).Archivo = Archivo Then
+        
+            'Actualizamos el archivo de versiones
+            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", Archivo)
+            Call WriteVar(LocalFile, "A" & i, "CHECK", Check)
+            
+            UpdateLocal.Archivos(i).Archivo = updateREMOTE.Archivos(i).Archivo
+            UpdateLocal.Archivos(i).md5 = updateREMOTE.Archivos(i).md5
+            
+        End If
+    
+    Next i
+
+End Sub
+

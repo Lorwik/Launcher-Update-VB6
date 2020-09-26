@@ -1,5 +1,10 @@
-frmMain = 26, 26, 1321, 654, , 26, 26, 1309, 664, C
-modGeneral = 78, 78, 1373, 706, 
-ModJson = 78, 78, 1373, 706, 
-cStringBuilder = 130, 130, 1425, 758, C
-ModUpdate = 104, 104, 1396, 732, Z
+ModUpdate = 156, 156, 1452, 810, 
+modGeneral = 78, 78, 1370, 706, 
+ModJson = 130, 130, 1422, 758, C
+cStringBuilder = 0, 0, 0, 0, C
+clsInet = 156, 156, 1448, 784, C
+frmMain = 0, 0, 1292, 628, Z, 26, 26, 1322, 680, C
+ucAsyncDLHost = 182, 182, 1547, 810, , 78, 78, 1374, 732, C
+ucAsyncDLStripe = 0, 0, 0, 0, C, 104, 104, 1400, 758, C
+modCripto = 52, 52, 1344, 680, 
+frmOpciones = 0, 0, 0, 0, C, 130, 130, 1426, 784, C
