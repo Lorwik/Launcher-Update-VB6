@@ -14,7 +14,6 @@ Type tArchivos
 End Type
 
 Type tUpdate
-    updateNumber As Integer
     TotalFiles As Integer
     TotalCarpetas As Integer
     Archivos() As tArchivos
@@ -58,25 +57,24 @@ Public Sub CargarListasLOCAL()
         Exit Sub
     End If
 
-    UpdateLocal.updateNumber = Val(GetVar(LocalFile, "MANIFEST", "UPDATENUMBER"))
     UpdateLocal.TotalFiles = Val(GetVar(LocalFile, "MANIFEST", "TOTALFILES"))
-    UpdateLocal.TotalCarpetas = Val(GetVar(LocalFile, "MANIFEST", "TOTALCARPETAS"))
-    UpdateLocal.LauncherCheck = GetVar(LocalFile, "MANIFEST", "CHECK")
+    UpdateLocal.TotalCarpetas = Val(GetVar(LocalFile, "MANIFEST", "TOTALFOLDERS"))
+    UpdateLocal.LauncherCheck = GetVar(LocalFile, "MANIFEST", "checksum")
 
-    ReDim UpdateLocal.Archivos(1 To UpdateLocal.TotalFiles) As tArchivos
+    ReDim UpdateLocal.Archivos(0 To UpdateLocal.TotalFiles) As tArchivos
 
-    For i = 1 To UpdateLocal.TotalFiles
+    For i = 0 To UpdateLocal.TotalFiles
 
-        UpdateLocal.Archivos(i).Archivo = GetVar(LocalFile, "A" & i, "ARCHIVO")
-        UpdateLocal.Archivos(i).md5 = UCase(GetVar(LocalFile, "A" & i, "CHECK"))
+        UpdateLocal.Archivos(i).Archivo = GetVar(LocalFile, "File" & i, "name")
+        UpdateLocal.Archivos(i).md5 = UCase(GetVar(LocalFile, "File" & i, "checksum"))
 
     Next i
 
-    ReDim UpdateLocal.Carpetas(1 To UpdateLocal.TotalCarpetas) As String
+    ReDim UpdateLocal.Carpetas(0 To UpdateLocal.TotalCarpetas) As String
 
-    For i = 1 To UpdateLocal.TotalCarpetas
+    For i = 0 To UpdateLocal.TotalCarpetas
 
-        UpdateLocal.Carpetas(i) = GetVar(LocalFile, "C" & i, "CARPETA")
+        UpdateLocal.Carpetas(i) = GetVar(LocalFile, "Folder" & i, "name")
 
     Next i
 
@@ -101,47 +99,31 @@ Public Sub CargarListasREMOTE()
 
     Set updateREMOTE.JsonListas = ModJson.parse(responseServer)
 
-    updateREMOTE.updateNumber = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("UPDATENUMBER"))
     updateREMOTE.TotalFiles = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALFILES"))
-    updateREMOTE.TotalCarpetas = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALCARPETAS"))
-    updateREMOTE.LauncherCheck = updateREMOTE.JsonListas.Item("MANIFEST").Item("CHECK")
+    updateREMOTE.TotalCarpetas = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TotalFolders"))
+    updateREMOTE.LauncherCheck = updateREMOTE.JsonListas.Item("MANIFEST").Item("checksum")
 
-    ReDim updateREMOTE.Archivos(1 To updateREMOTE.TotalFiles) As tArchivos
+    ReDim updateREMOTE.Archivos(0 To updateREMOTE.TotalFiles) As tArchivos
 
-    For i = 1 To updateREMOTE.TotalFiles
+    For i = 0 To updateREMOTE.TotalFiles
 
-        updateREMOTE.Archivos(i).Archivo = updateREMOTE.JsonListas.Item("A" & i).Item("ARCHIVO")
-        updateREMOTE.Archivos(i).md5 = UCase(updateREMOTE.JsonListas.Item("A" & i).Item("CHECK"))
+        updateREMOTE.Archivos(i).Archivo = updateREMOTE.JsonListas.Item("Files").Item("File" & i).Item("name")
+        updateREMOTE.Archivos(i).md5 = UCase(updateREMOTE.JsonListas.Item("Files").Item("File" & i).Item("checksum"))
 
     Next i
 
-    ReDim updateREMOTE.Carpetas(1 To updateREMOTE.TotalCarpetas) As String
+    ReDim updateREMOTE.Carpetas(0 To updateREMOTE.TotalCarpetas) As String
 
-    For i = 1 To updateREMOTE.TotalCarpetas
+    For i = 0 To updateREMOTE.TotalCarpetas
 
-        updateREMOTE.Carpetas(i) = updateREMOTE.JsonListas.Item("C" & i).Item("CARPETA")
+        updateREMOTE.Carpetas(i) = updateREMOTE.JsonListas.Item("Folders").Item("Folder" & i).Item("name")
+
 
     Next i
 
     Set Inet = Nothing
 
 End Sub
-
-Public Function CompararVersiones() As Boolean
-'********************************************
-'Autor: Lorwik
-'Fecha: 17/09/2020
-'Descripción: Comprueba si hay actualizaciones
-'********************************************
-
-    If UpdateLocal.updateNumber <> updateREMOTE.updateNumber Then
-        CompararVersiones = False
-        Exit Function
-    End If
-
-    CompararVersiones = True
-
-End Function
 
 Public Function CompararArchivos() As Boolean
 '********************************************
@@ -160,7 +142,7 @@ Public Function CompararArchivos() As Boolean
         Exit Function
     End If
 
-    For i = 1 To updateREMOTE.TotalFiles
+    For i = 0 To updateREMOTE.TotalFiles
 
         'Comprobamos todos los CHECK
         If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & updateREMOTE.Archivos(i).Archivo, vbNormal) = False Then
@@ -191,8 +173,8 @@ Public Sub CompararyCrearCarpetas()
 
     Dim i As Integer
 
-    For i = 1 To updateREMOTE.TotalCarpetas
-
+    For i = 0 To updateREMOTE.TotalCarpetas
+    
         If Not FileExist(App.Path & "\" & updateREMOTE.Carpetas(i), vbDirectory) Then
 
             MkDir App.Path & "\" & updateREMOTE.Carpetas(i)
@@ -217,7 +199,7 @@ Public Function ActualizarCliente() As Boolean
 
     If LauncherDesactualizado Then
         If FileExist(App.Path & "\" & LAUNCHEREXEUP, vbNormal) Then Kill App.Path & "\" & LAUNCHEREXEUP
-        frmMain.ucAsyncDLHost.AddDownloadJob URLUPDATE & "launcher/" & LAUNCHEREXEUP, LAUNCHEREXEUP
+        frmMain.ucAsyncDLHost.AddDownloadJob URLUPDATE & "cliente/" & LAUNCHEREXEUP, LAUNCHEREXEUP
 
         DoEvents
     End If
@@ -255,23 +237,25 @@ Private Sub ObtenerVersionFile()
     
     With updateREMOTE
 
-        Call WriteVar(LocalFile, "MANIFEST", "UPDATENUMBER", .updateNumber)
         Call WriteVar(LocalFile, "MANIFEST", "TOTALFILES", .TotalFiles)
         Call WriteVar(LocalFile, "MANIFEST", "TOTALCARPETAS", .TotalCarpetas)
-        Call WriteVar(LocalFile, "MANIFEST", "CHECK", .LauncherCheck)
+        Call WriteVar(LocalFile, "MANIFEST", "checksum", .LauncherCheck)
         
-        For i = 1 To .TotalFiles
+        For i = 0 To .TotalFiles
         
-            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", .Archivos(i).Archivo)
-            Call WriteVar(LocalFile, "A" & i, "CHECK", .Archivos(i).md5)
+            Call WriteVar(LocalFile, "File" & i, "name", .Archivos(i).Archivo)
+            Call WriteVar(LocalFile, "File" & i, "checksum", .Archivos(i).md5)
+        
+        Next i
+        
+        For i = 0 To .TotalCarpetas
+        
+            Call WriteVar(LocalFile, "Folder" & i, "name", .Carpetas(i))
         
         Next i
         
-        For i = 1 To .TotalCarpetas
-        
-            Call WriteVar(LocalFile, "C" & i, "ARCHIVO", .Carpetas(i))
-        
-        Next i
+        'Ya tenemos el archivo en local, ahora lo cargamos
+        Call CargarListasLOCAL
     
     End With
     

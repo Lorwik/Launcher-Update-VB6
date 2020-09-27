@@ -46,7 +46,7 @@ Public Function ComprobarHash(ByVal File As String) As Boolean
                 
         Else '¿Coincide?
             
-            Call WriteVar(LocalFile, "MANIFEST", "CHECK", UCase(Trim(Hash)))
+            Call WriteVar(LocalFile, "MANIFEST", "checksum", UCase(Trim(Hash)))
                 
             ComprobarHash = True
             Exit Function
@@ -105,14 +105,18 @@ Public Function ComprobarIntegridad() As Integer
     Dim i As Integer
     Dim Count As Integer
     
-    For i = 1 To UpdateLocal.TotalFiles
+    For i = 0 To UpdateLocal.TotalFiles
     
-        '¿El MD5 guardado en local NO coincide con el obtenido del archivo?
-        If UCase(UpdateLocal.Archivos(i).md5) <> UCase(MD5File(UpdateLocal.Archivos(i).Archivo)) Then
-
-            Call NuevoDesactualizado(UpdateLocal.Archivos(i).Archivo, UpdateLocal.Archivos(i).md5)
-            Count = Count + 1 'Llevamos el control de archivos que no se pudieron comprobar
-            ActualizacionesPendientes = True
+        'Exclusion de archivos (hay que cambiarlo)
+        If UpdateLocal.Archivos(i).Archivo <> "Init\Config.ini" And UpdateLocal.Archivos(i).Archivo <> "Init\BindKeys.bin" Then
+    
+            '¿El MD5 guardado en local NO coincide con el obtenido del archivo?
+            If UCase(UpdateLocal.Archivos(i).md5) <> UCase(MD5File(UpdateLocal.Archivos(i).Archivo)) Then
+            
+                Call NuevoDesactualizado(UpdateLocal.Archivos(i).Archivo, UpdateLocal.Archivos(i).md5)
+                Count = Count + 1 'Llevamos el control de archivos que no se pudieron comprobar
+                ActualizacionesPendientes = True
+            End If
         End If
     
     Next i
