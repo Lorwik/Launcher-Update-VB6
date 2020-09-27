@@ -35,36 +35,6 @@ Begin VB.Form frmMain
       _ExtentX        =   8493
       _ExtentY        =   5318
    End
-   Begin VB.Label lblVersion 
-      Alignment       =   2  'Center
-      BackStyle       =   0  'Transparent
-      Caption         =   "#0"
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   195
-      Left            =   480
-      TabIndex        =   3
-      Top             =   6510
-      Width           =   570
-   End
-   Begin VB.Shape Shape1 
-      BackColor       =   &H00000000&
-      BackStyle       =   1  'Opaque
-      BorderColor     =   &H00404040&
-      Height          =   255
-      Left            =   480
-      Shape           =   4  'Rounded Rectangle
-      Top             =   6480
-      Width           =   615
-   End
    Begin VB.Image imgOpciones 
       Height          =   690
       Left            =   5520
@@ -194,11 +164,16 @@ Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpF
   
     Name TmpFileName As Sender.LocalFileName
     
-    
     If Sender.LocalFileName <> LAUNCHEREXEUP Then
         'Si el Hash no coincide...
-        If ComprobarHash(Sender.LocalFileName) = False Then _
-              Fallaron = Fallaron + Sender.LocalFileName & ", "
+        If ComprobarHash(Sender.LocalFileName) = False Then
+            Fallaron = Fallaron + Sender.LocalFileName & ", "
+            Call LauncherLog("Se descargo " & Sender.LocalFileName & " pero falló.")
+            
+        Else
+            Call LauncherLog("Se descargo " & Sender.LocalFileName & " correctamente")
+            
+        End If
         
         finalizados = finalizados + 1
         

@@ -28,7 +28,7 @@ Public Sub Main()
     If SinVersiones Then
         ActualizacionesPendientes = True
         
-        For i = 1 To updateREMOTE.TotalFiles
+        For i = 0 To updateREMOTE.TotalFiles
         
             Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
         
@@ -60,9 +60,7 @@ Public Sub Main()
             
         End If
     End If
-    
-    frmMain.lblVersion.Caption = updateREMOTE.updateNumber
-    
+
     DoEvents
     
     frmMain.Show
@@ -150,8 +148,12 @@ Public Sub LauncherLog(Desc As String)
 
     Dim nfile As Integer
         nfile = FreeFile ' obtenemos un canal
+        
+    '¿No existe la carpeta logs?
+    If Not FileExist(App.Path & "\Logs", vbDirectory) Then _
+        MkDir App.Path & "\Logs"
     
-    Open App.Path & "\logs\launcher.log" For Append Shared As #nfile
+    Open App.Path & "\Logs\launcher.log" For Append Shared As #nfile
         Print #nfile, Date & " " & Time & " " & Desc
     Close #nfile
     
@@ -172,14 +174,16 @@ Public Sub ActualizarVersionInfo(ByVal Archivo As String, ByVal Check As String)
 
     Dim i As Integer
     
-    For i = 1 To updateREMOTE.TotalFiles
+    If SinVersiones Then Exit Sub
+    
+    For i = 0 To updateREMOTE.TotalFiles
     
         '¿Encontro el archivo?
         If updateREMOTE.Archivos(i).Archivo = Archivo Then
         
             'Actualizamos el archivo de versiones
-            Call WriteVar(LocalFile, "A" & i, "ARCHIVO", Archivo)
-            Call WriteVar(LocalFile, "A" & i, "CHECK", Check)
+            Call WriteVar(LocalFile, "File" & i, "name", Archivo)
+            Call WriteVar(LocalFile, "File" & i, "checksum", Check)
             
             UpdateLocal.Archivos(i).Archivo = updateREMOTE.Archivos(i).Archivo
             UpdateLocal.Archivos(i).md5 = updateREMOTE.Archivos(i).md5
