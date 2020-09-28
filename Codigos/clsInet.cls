@@ -30,12 +30,14 @@ Private Declare Function HttpSendRequest Lib "wininet.dll" Alias "HttpSendReques
 ' Constants for InternetOpen()
 '**********************************************
 Private Const INTERNET_OPEN_TYPE_PRECONFIG = 0
+
 '**********************************************
 ' Constants for InternetConnect()
 '**********************************************
 Private Const INTERNET_DEFAULT_HTTP_PORT = 80
 Private Const INTERNET_DEFAULT_HTTPS_PORT = 443
 Private Const INTERNET_SERVICE_HTTP = 3
+
 '**********************************************
 ' Constants for HttpOpenRequest()
 '**********************************************
@@ -44,6 +46,7 @@ Private Const INTERNET_FLAG_NO_CACHE_WRITE = &H4000000
 Private Const INTERNET_FLAG_PRAGMA_NOCACHE = &H100
 Private Const INTERNET_FLAG_NO_COOKIES = &H80000
 Private Const INTERNET_FLAG_SECURE = &H800000
+
 '**********************************************
 ' Constants for InternetQueryOption() or InternetSetOption()
 '**********************************************
@@ -52,6 +55,7 @@ Private Const INTERNET_OPTION_SEND_TIMEOUT = 5
 Private Const INTERNET_OPTION_RECEIVE_TIMEOUT = 6
 Private Const INTERNET_OPTION_SECURITY_FLAGS = 31
 Private Const SECURITY_FLAG_IGNORE_UNKNOWN_CA = &H100
+
 '**********************************************
 ' Constants for HttpAddRequestHeaders()
 '**********************************************
@@ -63,6 +67,7 @@ Private Const HTTP_ADDREQ_FLAG_REPLACE = &H80000000
 Private Const ERROR_INSUFFICIENT_BUFFER = 122
  
 Public Enum enumPostHeader
+
     HTTP_QUERY_ACCEPT = 24
     HTTP_QUERY_ACCEPT_CHARSET = 25
     HTTP_QUERY_ACCEPT_ENCODING = 26
@@ -140,6 +145,7 @@ Public Enum enumPostHeader
     HTTP_QUERY_VIA = 66
     HTTP_QUERY_WARNING = 67
     HTTP_QUERY_WWW_AUTHENTICATE = 40
+
 End Enum
  
 Private Const CONNECTION_TIMEOUT_MILLIS As Long = 60000
@@ -155,132 +161,205 @@ Private m_hInetRequest                  As Long
 Private m_sHttpMethod                   As String
  
 Public Property Let PostParameters(ByVal sData As String)
-    m_sPOSTData = sData
+        
+        On Error GoTo PostParameters_Err
+        
+100     m_sPOSTData = sData
+        
+        Exit Property
+
+PostParameters_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.PostParameters", _
+                  "clsInet component failure"
+        
 End Property
  
 Public Property Get PostParameters() As String
-    PostParameters = m_sPOSTData
+        
+        On Error GoTo PostParameters_Err
+        
+100     PostParameters = m_sPOSTData
+        
+        Exit Property
+
+PostParameters_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.PostParameters", _
+                  "clsInet component failure"
+        
 End Property
  
-Public Function OpenRequest(ByVal sURL As String, _
-                            Optional ByVal sHttpMethod As String = "POST", _
-                            Optional ByVal sUserName As String = vbNullString, _
-                            Optional ByVal sPassword As String = vbNullString, _
-                            Optional ByRef sErrorMsg As Variant) As Boolean
+Public Function OpenRequest(ByVal sURL As String, Optional ByVal sHttpMethod As String = "POST", Optional ByVal sUserName As String = vbNullString, Optional ByVal sPassword As String = vbNullString, Optional ByRef sErrorMsg As Variant) As Boolean
+        
+        On Error GoTo OpenRequest_Err
+        
  
-    m_sPOSTData = ""
-    m_sHttpMethod = sHttpMethod
+100     m_sPOSTData = ""
+102     m_sHttpMethod = sHttpMethod
 
-    If Not CrackURL(sURL) Then Exit Function
+104     If Not CrackURL(sURL) Then Exit Function
  
-    m_hInetSession = InternetOpen("Http Client", INTERNET_OPEN_TYPE_PRECONFIG, vbNullString, vbNullString, 0)
+106     m_hInetSession = InternetOpen("Http Client", INTERNET_OPEN_TYPE_PRECONFIG, vbNullString, vbNullString, 0)
 
-    If m_hInetSession <= 0 Then
-        sErrorMsg = "InternetOpen() failed (System Error " & Err.LastDllError & ")"
-        GoTo EXIT_LABEL
-    End If
- 
-    m_hInetConnect = InternetConnect(m_hInetSession, m_sURLDomain, m_sURLPort, sUserName, sPassword, INTERNET_SERVICE_HTTP, 0, 0)
-
-    If m_hInetSession <= 0 Then
-        sErrorMsg = "InternetConnect() failed (System Error " & Err.LastDllError & ")"
-        GoTo EXIT_LABEL
-    End If
- 
-    Dim lFlags As Long
-    lFlags = (INTERNET_FLAG_NO_COOKIES Or INTERNET_FLAG_RELOAD Or INTERNET_FLAG_NO_CACHE_WRITE)
-
-    If m_bURLSSL Then lFlags = (lFlags Or INTERNET_FLAG_SECURE)
- 
-    m_hInetRequest = HttpOpenRequest(m_hInetConnect, sHttpMethod, m_sURLPath, "HTTP/1.0", vbNullString, vbNullString, lFlags, 0)
-
-    If m_hInetRequest <= 0 Then
-        sErrorMsg = "HttpOpenRequest() failed (System Error " & Err.LastDllError & ")"
-        GoTo EXIT_LABEL
-    End If
-    
-    If Not CBool(InternetSetOption(m_hInetRequest, INTERNET_OPTION_CONNECT_TIMEOUT, CONNECTION_TIMEOUT_MILLIS, 4)) Then
-        sErrorMsg = "InternetSetOption(INTERNET_OPTION_CONNECT_TIMEOUT) failed (System Error " & Err.LastDllError & ")"
-        GoTo EXIT_LABEL
-    End If
-    
-    If Not CBool(InternetSetOption(m_hInetRequest, INTERNET_OPTION_SEND_TIMEOUT, CONNECTION_TIMEOUT_MILLIS, 4)) Then
-        sErrorMsg = "InternetSetOption(INTERNET_OPTION_SEND_TIMEOUT) failed (System Error " & Err.LastDllError & ")"
-        GoTo EXIT_LABEL
-    End If
-    
-    If Not CBool(InternetSetOption(m_hInetRequest, INTERNET_OPTION_RECEIVE_TIMEOUT, CONNECTION_TIMEOUT_MILLIS, 4)) Then
-        sErrorMsg = "InternetSetOption(INTERNET_OPTION_RECEIVE_TIMEOUT) failed (System Error " & Err.LastDllError & ")"
-        GoTo EXIT_LABEL
-    End If
-    
-    If sHttpMethod = "POST" Then
-        If Not AddHeader("Content-Type", "application/x-www-form-urlencoded") Then
-            sErrorMsg = "AddHeader('Content-Type') failed"
-            GoTo EXIT_LABEL
+108     If m_hInetSession <= 0 Then
+110         sErrorMsg = "InternetOpen() failed (System Error " & Err.LastDllError & ")"
+112         GoTo EXIT_LABEL
         End If
-    End If
+ 
+114     m_hInetConnect = InternetConnect(m_hInetSession, m_sURLDomain, m_sURLPort, sUserName, sPassword, INTERNET_SERVICE_HTTP, 0, 0)
+
+116     If m_hInetSession <= 0 Then
+118         sErrorMsg = "InternetConnect() failed (System Error " & Err.LastDllError & ")"
+120         GoTo EXIT_LABEL
+        End If
+ 
+        Dim lFlags As Long
+
+122     lFlags = (INTERNET_FLAG_NO_COOKIES Or INTERNET_FLAG_RELOAD Or INTERNET_FLAG_NO_CACHE_WRITE)
+
+124     If m_bURLSSL Then lFlags = (lFlags Or INTERNET_FLAG_SECURE)
+ 
+126     m_hInetRequest = HttpOpenRequest(m_hInetConnect, sHttpMethod, m_sURLPath, "HTTP/1.0", vbNullString, vbNullString, lFlags, 0)
+
+128     If m_hInetRequest <= 0 Then
+130         sErrorMsg = "HttpOpenRequest() failed (System Error " & Err.LastDllError & ")"
+132         GoTo EXIT_LABEL
+        End If
     
-    If m_bURLSSL Then
-        Dim lBuffer As Long
-        Call InternetQueryOption(m_hInetRequest, INTERNET_OPTION_SECURITY_FLAGS, lFlags, lBuffer)
-        lFlags = lFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA
-        Call InternetSetOption(m_hInetRequest, INTERNET_OPTION_SECURITY_FLAGS, lFlags, lBuffer)
-    End If
+134     If Not CBool(InternetSetOption(m_hInetRequest, INTERNET_OPTION_CONNECT_TIMEOUT, CONNECTION_TIMEOUT_MILLIS, 4)) Then
+136         sErrorMsg = "InternetSetOption(INTERNET_OPTION_CONNECT_TIMEOUT) failed (System Error " & Err.LastDllError & ")"
+138         GoTo EXIT_LABEL
+        End If
     
-    OpenRequest = True
+140     If Not CBool(InternetSetOption(m_hInetRequest, INTERNET_OPTION_SEND_TIMEOUT, CONNECTION_TIMEOUT_MILLIS, 4)) Then
+142         sErrorMsg = "InternetSetOption(INTERNET_OPTION_SEND_TIMEOUT) failed (System Error " & Err.LastDllError & ")"
+144         GoTo EXIT_LABEL
+        End If
+    
+146     If Not CBool(InternetSetOption(m_hInetRequest, INTERNET_OPTION_RECEIVE_TIMEOUT, CONNECTION_TIMEOUT_MILLIS, 4)) Then
+148         sErrorMsg = "InternetSetOption(INTERNET_OPTION_RECEIVE_TIMEOUT) failed (System Error " & Err.LastDllError & ")"
+150         GoTo EXIT_LABEL
+        End If
+    
+152     If sHttpMethod = "POST" Then
+154         If Not AddHeader("Content-Type", "application/x-www-form-urlencoded") Then
+156             sErrorMsg = "AddHeader('Content-Type') failed"
+158             GoTo EXIT_LABEL
+            End If
+        End If
+    
+160     If m_bURLSSL Then
+
+            Dim lBuffer As Long
+
+162         Call InternetQueryOption(m_hInetRequest, INTERNET_OPTION_SECURITY_FLAGS, lFlags, lBuffer)
+164         lFlags = lFlags Or SECURITY_FLAG_IGNORE_UNKNOWN_CA
+166         Call InternetSetOption(m_hInetRequest, INTERNET_OPTION_SECURITY_FLAGS, lFlags, lBuffer)
+
+        End If
+    
+168     OpenRequest = True
     
 EXIT_LABEL:
 
+        
+        Exit Function
+
+OpenRequest_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.OpenRequest", _
+                  "clsInet component failure"
+        
 End Function
     
 Public Function AddHeader(ByVal sName As String, ByVal sValue As String) As Boolean
-    Dim sHeaderFmt As String
+        
+        On Error GoTo AddHeader_Err
+        
+
+        Dim sHeaderFmt As String
     
-    sHeaderFmt = Trim$(sName) & ": " & Trim$(sValue) & vbCrLf
-    AddHeader = CBool(HttpAddRequestHeaders(m_hInetRequest, sHeaderFmt, Len(sHeaderFmt), HTTP_ADDREQ_FLAG_ADD Or HTTP_ADDREQ_FLAG_REPLACE))
+100     sHeaderFmt = Trim$(sName) & ": " & Trim$(sValue) & vbCrLf
+102     AddHeader = CBool(HttpAddRequestHeaders(m_hInetRequest, sHeaderFmt, Len(sHeaderFmt), HTTP_ADDREQ_FLAG_ADD Or HTTP_ADDREQ_FLAG_REPLACE))
     
+        
+        Exit Function
+
+AddHeader_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.AddHeader", _
+                  "clsInet component failure"
+        
 End Function
     
 Public Function AddPOSTParameter(ByVal name As String, ByVal value As String) As Boolean
+        
+        On Error GoTo AddPOSTParameter_Err
+        
 
-    Dim sParam As String
+        Dim sParam As String
 
-    name = Trim$(name)
-    value = Trim$(value)
+100     name = Trim$(name)
+102     value = Trim$(value)
 
-    If m_sHttpMethod = "POST" Then value = UrlEncode(value)
+104     If m_sHttpMethod = "POST" Then value = UrlEncode(value)
 
-    If Len(name) > 0 Then
-        sParam = name & "=" & value
-    Else
-        sParam = value
-    End If
+106     If Len(name) > 0 Then
+108         sParam = name & "=" & value
+        Else
+110         sParam = value
+        End If
  
-    If Len(m_sPOSTData) = 0 Then
-        m_sPOSTData = sParam
-    Else
-        m_sPOSTData = m_sPOSTData & "&" & sParam
-    End If
+112     If Len(m_sPOSTData) = 0 Then
+114         m_sPOSTData = sParam
+        Else
+116         m_sPOSTData = m_sPOSTData & "&" & sParam
+        End If
     
-    AddPOSTParameter = True
+118     AddPOSTParameter = True
+        
+        Exit Function
+
+AddPOSTParameter_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.AddPOSTParameter", _
+                  "clsInet component failure"
+        
 End Function
  
 Public Function Execute() As Boolean
+        
+        On Error GoTo Execute_Err
+        
 
-    If Len(m_sPOSTData) > 0 Then
-        Call AddHeader("Content-Length", Len(m_sPOSTData))
-        Execute = CBool(HttpSendRequest(m_hInetRequest, vbNullString, 0, m_sPOSTData, Len(m_sPOSTData)))
-    Else
-        Execute = CBool(HttpSendRequest(m_hInetRequest, vbNullString, 0, vbNullString, 0))
-    End If
+100     If Len(m_sPOSTData) > 0 Then
+102         Call AddHeader("Content-Length", Len(m_sPOSTData))
+104         Execute = CBool(HttpSendRequest(m_hInetRequest, vbNullString, 0, m_sPOSTData, Len(m_sPOSTData)))
+
+        Else
+106         Execute = CBool(HttpSendRequest(m_hInetRequest, vbNullString, 0, vbNullString, 0))
+
+        End If
+
+        
+        Exit Function
+
+Execute_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.Execute", _
+                  "clsInet component failure"
+        
 End Function
  
 Public Function GetResponseAsString() As String
+
     On Error GoTo errhandler
+
     Dim sBody      As String
     Dim sBuffer    As String
     Dim lBytesRead As Long
+
     Do
         sBuffer = Space$(4048)
         InternetReadFile m_hInetRequest, sBuffer, Len(sBuffer), lBytesRead
@@ -288,7 +367,9 @@ Public Function GetResponseAsString() As String
         If lBytesRead <= 0 Then Exit Do
         sBody = sBody & Left$(sBuffer, lBytesRead)
     Loop
+
     GetResponseAsString = sBody
+
     Exit Function
 
 errhandler:
@@ -297,7 +378,9 @@ errhandler:
 End Function
 
 Public Function GetResponseHeader(ByVal lHeaderType As enumPostHeader) As String
+
     On Error GoTo errhandler
+
     Dim sValue       As String
     Dim lBytesRead   As Long
     Dim lHeaderIndex As Long
@@ -310,87 +393,131 @@ Public Function GetResponseHeader(ByVal lHeaderType As enumPostHeader) As String
     If bSuccess And lBytesRead > 0 Then
         GetResponseHeader = Left$(sValue, InStr(1, sValue, Chr$(0)) - 1)
     End If
+
     Exit Function
  
 errhandler:
 End Function
  
 Private Function CrackURL(ByVal strURL As String) As Boolean
-    Dim intPos      As Integer
-    Dim strProtocol As String
- 
-    m_sURLDomain = vbNullString
-    m_sURLPort = vbNullString
-    m_sURLPath = vbNullString
-    m_bURLSSL = False
- 
-    ' search for double forward slash and remove protocol prefix
-    intPos = InStr(1, strURL, "//")
+        
+        On Error GoTo CrackURL_Err
+        
 
-    If intPos > 0 Then
-        strProtocol = Left$(strURL, intPos - 1)
-        strURL = Mid$(strURL, intPos + 2)
-    End If
- 
-    m_bURLSSL = (InStr(LCase$(strProtocol), "https") > 0)
- 
-    ' split the URL into domain and path using the first forward slash found
-    ' If no slash is found, then the url is the domain only
-    intPos = InStr(1, strURL, "/")
+        Dim intPos      As Integer
 
-    If intPos > 0 Then
-        m_sURLDomain = Left$(strURL, intPos - 1)
-        m_sURLPath = Mid$(strURL, intPos + 1)
-    Else
-        m_sURLDomain = strURL
-    End If
+        Dim strProtocol As String
  
-    ' Now see if a port is attached to the domain; split if found
-    intPos = InStr(1, m_sURLDomain, ":")
+100     m_sURLDomain = vbNullString
+102     m_sURLPort = vbNullString
+104     m_sURLPath = vbNullString
+106     m_bURLSSL = False
+ 
+        ' search for double forward slash and remove protocol prefix
+108     intPos = InStr(1, strURL, "//")
 
-    If intPos > 0 Then
-        m_sURLPort = Mid$(m_sURLDomain, intPos + 1)
-        m_sURLDomain = Left$(m_sURLDomain, intPos - 1)
-    Else
-        m_sURLPort = IIf(m_bURLSSL, INTERNET_DEFAULT_HTTPS_PORT, INTERNET_DEFAULT_HTTP_PORT)
-    End If
-    CrackURL = True
+110     If intPos > 0 Then
+112         strProtocol = Left$(strURL, intPos - 1)
+114         strURL = Mid$(strURL, intPos + 2)
+        End If
+ 
+116     m_bURLSSL = (InStr(LCase$(strProtocol), "https") > 0)
+ 
+        ' split the URL into domain and path using the first forward slash found
+        ' If no slash is found, then the url is the domain only
+118     intPos = InStr(1, strURL, "/")
+
+120     If intPos > 0 Then
+122         m_sURLDomain = Left$(strURL, intPos - 1)
+124         m_sURLPath = Mid$(strURL, intPos + 1)
+        Else
+126         m_sURLDomain = strURL
+        End If
+ 
+        ' Now see if a port is attached to the domain; split if found
+128     intPos = InStr(1, m_sURLDomain, ":")
+
+130     If intPos > 0 Then
+132         m_sURLPort = Mid$(m_sURLDomain, intPos + 1)
+134         m_sURLDomain = Left$(m_sURLDomain, intPos - 1)
+        Else
+136         m_sURLPort = IIf(m_bURLSSL, INTERNET_DEFAULT_HTTPS_PORT, INTERNET_DEFAULT_HTTP_PORT)
+        End If
+
+138     CrackURL = True
+        
+        Exit Function
+
+CrackURL_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.CrackURL", _
+                  "clsInet component failure"
+        
 End Function
  
 Private Function TrimString(ByVal s As String) As String
-    TrimString = Left$(s, InStr(1, s, Chr$(0)) - 1)
+        
+        On Error GoTo TrimString_Err
+        
+100     TrimString = Left$(s, InStr(1, s, Chr$(0)) - 1)
+        
+        Exit Function
+
+TrimString_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.TrimString", _
+                  "clsInet component failure"
+        
 End Function
  
 Private Function UrlEncode(sText As String) As String
-    Dim sResult As String
-    Dim sFinal  As String
-    Dim sChar   As String
-    Dim i       As Long
+        
+        On Error GoTo UrlEncode_Err
+        
+
+        Dim sResult As String
+
+        Dim sFinal  As String
+
+        Dim sChar   As String
+
+        Dim i       As Long
  
-    sResult = ""
-    sFinal = ""
+100     sResult = ""
+102     sFinal = ""
 
-    For i = 1 To Len(sText)
-        sChar = Mid$(sText, i, 1)
+104     For i = 1 To Len(sText)
+106         sChar = Mid$(sText, i, 1)
 
-        If InStr(1, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", sChar) <> 0 Then
-            sResult = sResult & sChar
-        ElseIf sChar = " " Then
-            sResult = sResult & "+"
-        ElseIf sChar = vbCr Or sChar = vbLf Or sChar = vbCrLf Then
-        Else
-            sResult = sResult & "%" & Hex$(Asc(sChar))
-        End If
+108         If InStr(1, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", sChar) <> 0 Then
+110             sResult = sResult & sChar
+112         ElseIf sChar = " " Then
+114             sResult = sResult & "+"
+116         ElseIf sChar = vbCr Or sChar = vbLf Or sChar = vbCrLf Then
+            Else
+118             sResult = sResult & "%" & Hex$(Asc(sChar))
+            End If
 
-        If Len(sResult) >= 1000 Then
-            sFinal = sFinal & sResult
-            sResult = ""
-        End If
-    Next
-    UrlEncode = sFinal & sResult
+120         If Len(sResult) >= 1000 Then
+122             sFinal = sFinal & sResult
+124             sResult = ""
+            End If
+
+        Next
+
+126     UrlEncode = sFinal & sResult
+        
+        Exit Function
+
+UrlEncode_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.clsInet.UrlEncode", _
+                  "clsInet component failure"
+        
 End Function
  
 Public Sub CloseConnection()
+
     On Error GoTo ERROR_HANDLER
 
     If m_hInetRequest > 0 Then Call InternetCloseHandle(m_hInetRequest)
@@ -408,10 +535,9 @@ ERROR_HANDLER:
 End Sub
  
 Private Sub Class_Terminate()
+    
+    On Error Resume Next
+    
     Call CloseConnection
 End Sub
-
-
-
-
 

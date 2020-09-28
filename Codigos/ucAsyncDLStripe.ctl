@@ -115,125 +115,330 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Type PointAPI
-  X As Long
-  Y As Long
+
+    X As Long
+    Y As Long
+
 End Type
+
 Private Declare Function GetCursorPos Lib "user32" (lpPoint As PointAPI) As Long
 
 Private WithEvents tHover As VB.Timer, mDown As Boolean, TL As PointAPI
 Attribute tHover.VB_VarHelpID = -1
-Private mUrl As String, mLocalFileName As String, mStartDate As Date
+
+Private mUrl              As String, mLocalFileName As String, mStartDate As Date
 
 Public Sub DownloadFile(URL As String, LocalFileName As String, Optional ByVal Mode As AsyncReadConstants = vbAsyncReadForceUpdate)
-  CancelDownload
-  mUrl = URL
-  mLocalFileName = LocalFileName
-  mStartDate = Now
-  AsyncRead mUrl, vbAsyncTypeFile, mLocalFileName, Mode
-  Extender.ToolTipText = mLocalFileName
+        
+        On Error GoTo DownloadFile_Err
+        
+100     CancelDownload
+102     mUrl = URL
+104     mLocalFileName = LocalFileName
+106     mStartDate = Now
+108     AsyncRead mUrl, vbAsyncTypeFile, mLocalFileName, Mode
+110     Extender.ToolTipText = mLocalFileName
+        
+        Exit Sub
+
+DownloadFile_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.DownloadFile", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Public Sub CancelDownload()
-  shpProgress.Visible = False
-  On Error Resume Next
+    shpProgress.Visible = False
+
+    On Error Resume Next
+
     CancelAsyncRead mLocalFileName 'cancel a possibly still running Download with the same Destination-Filename
-  On Error GoTo 0
+
+    On Error GoTo 0
+
 End Sub
 
 Public Property Get URL() As String
-  URL = mUrl
+        
+        On Error GoTo URL_Err
+        
+100     URL = mUrl
+        
+        Exit Property
+
+URL_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.URL", _
+                  "ucAsyncDLStripe component failure"
+        
 End Property
 
 Public Property Get LocalFileName() As String
-  LocalFileName = mLocalFileName
+        
+        On Error GoTo LocalFileName_Err
+        
+100     LocalFileName = mLocalFileName
+        
+        Exit Property
+
+LocalFileName_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.LocalFileName", _
+                  "ucAsyncDLStripe component failure"
+        
 End Property
 
 Public Property Get StartDate() As Date
-  StartDate = mStartDate
+        
+        On Error GoTo StartDate_Err
+        
+100     StartDate = mStartDate
+        
+        Exit Property
+
+StartDate_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.StartDate", _
+                  "ucAsyncDLStripe component failure"
+        
 End Property
 
 Public Property Get Caption() As String
-  Caption = lblCaption.Caption
+        
+        On Error GoTo Caption_Err
+        
+100     Caption = lblCaption.Caption
+        
+        Exit Property
+
+Caption_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.Caption", _
+                  "ucAsyncDLStripe component failure"
+        
 End Property
+
 Public Property Let Caption(ByVal NewValue As String)
-  lblCaption.Caption = NewValue
+        
+        On Error GoTo Caption_Err
+        
+100     lblCaption.Caption = NewValue
+        
+        Exit Property
+
+Caption_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.Caption", _
+                  "ucAsyncDLStripe component failure"
+        
 End Property
  
 Private Sub lblCancelResume_Click()
-  If lblCancelResume.Caption = "Resume" Then
-    lblCancelResume.Caption = "Stop": lblCancelResume.ForeColor = &HAA00&
-    DownloadFile mUrl, mLocalFileName
-  Else
-    lblCancelResume.Caption = "Resume": lblCancelResume.ForeColor = &H88EE&
-    CancelDownload
-  End If
+        
+        On Error GoTo lblCancelResume_Click_Err
+        
+
+100     If lblCancelResume.Caption = "Resume" Then
+102         lblCancelResume.Caption = "Stop"
+104         lblCancelResume.ForeColor = &HAA00&
+106         DownloadFile mUrl, mLocalFileName
+        Else
+108         lblCancelResume.Caption = "Resume"
+110         lblCancelResume.ForeColor = &H88EE&
+112         CancelDownload
+        End If
+
+        
+        Exit Sub
+
+lblCancelResume_Click_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.lblCancelResume_Click", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Private Sub lblCancelResume_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-  mDown = True
+        
+        On Error GoTo lblCancelResume_MouseDown_Err
+        
+100     mDown = True
+        
+        Exit Sub
+
+lblCancelResume_MouseDown_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.lblCancelResume_MouseDown", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
+
 Private Sub lblCancelResume_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-  GetCursorPos TL: TL.X = TL.X - X / Screen.TwipsPerPixelX: TL.Y = TL.Y - Y / Screen.TwipsPerPixelX
-  If tHover Is Nothing Then Set tHover = Controls.Add("VB.Timer", "tHover"): tHover.Interval = 20
+        
+        On Error GoTo lblCancelResume_MouseMove_Err
+        
+100     GetCursorPos TL
+102     TL.X = TL.X - X / Screen.TwipsPerPixelX
+104     TL.Y = TL.Y - Y / Screen.TwipsPerPixelX
+
+106     If tHover Is Nothing Then
+108         Set tHover = Controls.Add("VB.Timer", "tHover")
+110         tHover.Interval = 20
+        End If
+
+        
+        Exit Sub
+
+lblCancelResume_MouseMove_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.lblCancelResume_MouseMove", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
+
 Private Sub lblCancelResume_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-  mDown = False
+        
+        On Error GoTo lblCancelResume_MouseUp_Err
+        
+100     mDown = False
+        
+        Exit Sub
+
+lblCancelResume_MouseUp_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.lblCancelResume_MouseUp", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Private Sub tHover_Timer()
-Dim Pt As PointAPI, OutSide As Boolean
-  GetCursorPos Pt
-  OutSide = Pt.X < TL.X Or Pt.Y < TL.Y Or Pt.X >= TL.X + lblCancelResume.Width Or Pt.Y >= TL.Y + lblCancelResume.Height
+    
+    On Error Resume Next
+    
 
-  If mDown And Not OutSide Then
-    lblCancelResume.Move shpCancelResume.Left + 1, shpCancelResume.Top + 2
-    shpCancelResume.FillColor = &HA0A0A0: shpCancelResume.BorderColor = vbBlack
-  ElseIf OutSide Then
-    lblCancelResume.Move shpCancelResume.Left, shpCancelResume.Top + 1
-    shpCancelResume.FillColor = &HC0C0C0: shpCancelResume.BorderColor = &H808080
-    Set tHover = Nothing
-    Controls.Remove "tHover"
-  Else
-    lblCancelResume.Move shpCancelResume.Left, shpCancelResume.Top + 1
-    shpCancelResume.FillColor = &HE0E0E0: shpCancelResume.BorderColor = &H808080
-  End If
+    Dim Pt As PointAPI, OutSide As Boolean
+
+    GetCursorPos Pt
+    OutSide = Pt.X < TL.X Or Pt.Y < TL.Y Or Pt.X >= TL.X + lblCancelResume.Width Or Pt.Y >= TL.Y + lblCancelResume.Height
+
+    If mDown And Not OutSide Then
+        lblCancelResume.Move shpCancelResume.Left + 1, shpCancelResume.Top + 2
+        shpCancelResume.FillColor = &HA0A0A0
+        shpCancelResume.BorderColor = vbBlack
+    ElseIf OutSide Then
+        lblCancelResume.Move shpCancelResume.Left, shpCancelResume.Top + 1
+        shpCancelResume.FillColor = &HC0C0C0
+        shpCancelResume.BorderColor = &H808080
+        Set tHover = Nothing
+        Controls.Remove "tHover"
+    Else
+        lblCancelResume.Move shpCancelResume.Left, shpCancelResume.Top + 1
+        shpCancelResume.FillColor = &HE0E0E0
+        shpCancelResume.BorderColor = &H808080
+    End If
+
 End Sub
 
 Private Sub UserControl_Initialize()
-  ScaleMode = vbPixels
+        
+        On Error GoTo UserControl_Initialize_Err
+        
+100     ScaleMode = vbPixels
+        
+        Exit Sub
+
+UserControl_Initialize_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.UserControl_Initialize", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-  Extender.ToolTipText = IIf(X < (lblRemove.Left + lblRemove.Width), "Remove Download-Job", mUrl)
+        
+        On Error GoTo UserControl_MouseMove_Err
+        
+100     Extender.ToolTipText = IIf(X < (lblRemove.Left + lblRemove.Width), "Remove Download-Job", mUrl)
+        
+        Exit Sub
+
+UserControl_MouseMove_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.UserControl_MouseMove", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-  If X < (lblRemove.Left + lblRemove.Width) Then Parent.RemoveByLocalFileName mLocalFileName
+        
+        On Error GoTo UserControl_MouseUp_Err
+        
+
+100     If X < (lblRemove.Left + lblRemove.Width) Then Parent.RemoveByLocalFileName mLocalFileName
+        
+        Exit Sub
+
+UserControl_MouseUp_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.UserControl_MouseUp", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Private Sub UserControl_Resize()
-  shpCancelResume.Left = ScaleWidth - shpCancelResume.Width * 1.1
-  lblCancelResume.Move shpCancelResume.Left, shpCancelResume.Top + 1, shpCancelResume.Width, shpCancelResume.Height
-  shpProgressBase.Width = shpCancelResume.Left - 1.4 * shpProgressBase.Left
-  lblCaption.Move shpProgressBase.Left, shpProgressBase.Top + 1, shpProgressBase.Width, shpProgressBase.Height
+    
+    On Error Resume Next
+    
+    shpCancelResume.Left = ScaleWidth - shpCancelResume.Width * 1.1
+    lblCancelResume.Move shpCancelResume.Left, shpCancelResume.Top + 1, shpCancelResume.Width, shpCancelResume.Height
+    shpProgressBase.Width = shpCancelResume.Left - 1.4 * shpProgressBase.Left
+    lblCaption.Move shpProgressBase.Left, shpProgressBase.Top + 1, shpProgressBase.Width, shpProgressBase.Height
 End Sub
 
 Private Sub UserControl_AsyncReadProgress(AsyncProp As AsyncProperty)
-  Parent.RaiseDownloadProgress Me, AsyncProp.BytesRead, AsyncProp.BytesMax
-  shpProgress.Visible = AsyncProp.BytesMax
-  If AsyncProp.BytesMax = 0 Then Exit Sub
-  With shpProgressBase
-    shpProgress.Move .Left + 1, .Top + 1, (.Width - 2) * AsyncProp.BytesRead / AsyncProp.BytesMax, .Height - 2
-  End With
+        
+        On Error GoTo UserControl_AsyncReadProgress_Err
+        
+100     Parent.RaiseDownloadProgress Me, AsyncProp.BytesRead, AsyncProp.BytesMax
+102     shpProgress.Visible = AsyncProp.BytesMax
+
+104     If AsyncProp.BytesMax = 0 Then Exit Sub
+
+106     With shpProgressBase
+108         shpProgress.Move .Left + 1, .Top + 1, (.Width - 2) * AsyncProp.BytesRead / AsyncProp.BytesMax, .Height - 2
+        End With
+
+        
+        Exit Sub
+
+UserControl_AsyncReadProgress_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.UserControl_AsyncReadProgress", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
 
 Private Sub UserControl_AsyncReadComplete(AsyncProp As AsyncProperty)
-  If AsyncProp.StatusCode <> vbAsyncStatusCodeEndDownloadData Or AsyncProp.BytesRead = 0 Then
-    Parent.RaiseDownloadError Me, AsyncProp.StatusCode, AsyncProp.Status
-    CancelDownload
-  Else
-    Parent.RaiseDownloadComplete Me, AsyncProp.value
-    Parent.RemoveByLocalFileName mLocalFileName 'let's remove ourselves from the List in the Parent-Control
-  End If
+        
+        On Error GoTo UserControl_AsyncReadComplete_Err
+        
+
+100     If AsyncProp.StatusCode <> vbAsyncStatusCodeEndDownloadData Or AsyncProp.BytesRead = 0 Then
+102         Parent.RaiseDownloadError Me, AsyncProp.StatusCode, AsyncProp.Status
+104         CancelDownload
+        Else
+106         Parent.RaiseDownloadComplete Me, AsyncProp.value
+108         Parent.RemoveByLocalFileName mLocalFileName 'let's remove ourselves from the List in the Parent-Control
+        End If
+
+        
+        Exit Sub
+
+UserControl_AsyncReadComplete_Err:
+        Err.Raise vbObjectError + 100, _
+                  "WinterAOLauncher.ucAsyncDLStripe.UserControl_AsyncReadComplete", _
+                  "ucAsyncDLStripe component failure"
+        
 End Sub
  

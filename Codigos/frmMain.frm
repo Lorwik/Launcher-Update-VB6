@@ -87,123 +87,237 @@ Option Explicit
 Private Const CLIENTEXE As String = "\WinterAOResurrection.exe"
 
 Private Sub Form_Load()
-    Skin Me, vbRed
+        
+        On Error GoTo Form_Load_Err
+        
+100     Skin Me, vbRed
+        
+        Exit Sub
+
+Form_Load_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.Form_Load " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Sub
 
 Private Sub cmdJugar_Click()
         
-    Dim Integridad As Integer
-    
-    '¿Hay actualizaciones pendientes?
-    If ActualizacionesPendientes Or LauncherDesactualizado Then
-        ModUpdate.ActualizarCliente
+        On Error GoTo cmdJugar_Click_Err
         
-    Else 'Si esta todo actualizado...
+        
+        Dim Integridad As Integer
     
-        If Len(Fallaron) > 0 Then '¿Se actualizo antes? ¿Hubo fallos?
-            MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
-            frmMain.lblPendientes = "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
+        '¿Hay actualizaciones pendientes?
+100     If ActualizacionesPendientes Or LauncherDesactualizado Then
+102         ModUpdate.ActualizarCliente
+        
+        Else 'Si esta todo actualizado...
+    
+104         If Len(Fallaron) > 0 Then '¿Se actualizo antes? ¿Hubo fallos?
+106             MsgBox "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
+108             frmMain.lblPendientes = "No se ha podido comprobar la integridad de uno o varios archivos es posible que no se haya podido descargar correctamente. Archivos: " & Fallaron
             
-        Else 'Si todo esta OK, lanzamos el juego
+            Else 'Si todo esta OK, lanzamos el juego
         
-            'Ante de lanzar el cliente vamos a verificar todos los archivos
-            Integridad = ComprobarIntegridad
+                'Ante de lanzar el cliente vamos a verificar todos los archivos
+110             Integridad = ComprobarIntegridad
         
-            If Integridad <> 0 Then
+112             If Integridad <> 0 Then
                 
-                MsgBox "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
-                frmMain.lblPendientes = "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
+114                 MsgBox "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
+116                 frmMain.lblPendientes = "No se ha podido comprobar la integridad de " & Integridad & " archivos. Pulsa Jugar para volver a descargarlo. Si el problema persiste, revise su conexión a internet o contacte con los administradores del juego."
                 
-            Else
+                Else
         
-                If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
-                    Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
-                    DoEvents
-                    Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
-                    End
+118                 If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
+120                     Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
+122                     DoEvents
+124                     Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
+
+126                     End
                     
-                Else 'Si no existe, no podemos lanzar nada
-                    MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
+                    Else 'Si no existe, no podemos lanzar nada
+128                     MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
                     
+                    End If
                 End If
-            End If
             
+            End If
         End If
-    End If
+        
+        
+        Exit Sub
+
+cmdJugar_Click_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.cmdJugar_Click " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
         
 End Sub
 
 Private Sub cmdSalir_Click()
-    End
+        
+        On Error GoTo cmdSalir_Click_Err
+        
+
+100     End
+
+        
+        Exit Sub
+
+cmdSalir_Click_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.cmdSalir_Click " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Sub
 
 Private Sub imgOpciones_Click()
-    frmOpciones.Show
+        
+        On Error GoTo imgOpciones_Click_Err
+        
+100     frmOpciones.Show
+        
+        Exit Sub
+
+imgOpciones_Click_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.imgOpciones_Click " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Sub
 
 Private Sub ucAsyncDLHost_DownloadComplete(Sender As ucAsyncDLStripe, ByVal TmpFileName As String)
-'**********************************************************
-'Descripcion: Evento cuando termina una descarga
-'**********************************************************
+        '**********************************************************
+        'Descripcion: Evento cuando termina una descarga
+        '**********************************************************
+        
+        On Error GoTo ucAsyncDLHost_DownloadComplete_Err
+        
 
-    Static finalizados As Integer
+        Static finalizados As Integer
 
-    'Debug.Print "DownloadComplete for URL: "; Sender.URL & "; Directorio: " & Sender.LocalFileName
+        'Debug.Print "DownloadComplete for URL: "; Sender.URL & "; Directorio: " & Sender.LocalFileName
     
-    'the complete-event delivers a temporary filename - it is up to the user
-    'of the Control, to decide what to do with this TmpFile... the usual reaction will be
-    'a simple File-Renaming (ensuring an implicit Move-Operation on the FileSystem then)
-    'the Sender is the Control-Stripe of our DownloadListHost-Control - and in the Add-methods
-    'in the Form-Load-Event above, we have defined a "target-LocalFilename" already, which is
-    'associated with the matching URL (which was the Source of this completed Download here)
-    'This target-filename is (so far) only stored as String within the Stripe (Sender.LocalFileName)
+        'the complete-event delivers a temporary filename - it is up to the user
+        'of the Control, to decide what to do with this TmpFile... the usual reaction will be
+        'a simple File-Renaming (ensuring an implicit Move-Operation on the FileSystem then)
+        'the Sender is the Control-Stripe of our DownloadListHost-Control - and in the Add-methods
+        'in the Form-Load-Event above, we have defined a "target-LocalFilename" already, which is
+        'associated with the matching URL (which was the Source of this completed Download here)
+        'This target-filename is (so far) only stored as String within the Stripe (Sender.LocalFileName)
     
-    'So, yeah - just ensure a proper Move/Rename of the delivered TmpFileName
+        'So, yeah - just ensure a proper Move/Rename of the delivered TmpFileName
     
-    If FileExist(Sender.LocalFileName, vbNormal) Then Kill Sender.LocalFileName
+100     If FileExist(Sender.LocalFileName, vbNormal) Then Kill Sender.LocalFileName
   
-    Name TmpFileName As Sender.LocalFileName
+102     Name TmpFileName As Sender.LocalFileName
     
-    If Sender.LocalFileName <> LAUNCHEREXEUP Then
-        'Si el Hash no coincide...
-        If ComprobarHash(Sender.LocalFileName) = False Then
-            Fallaron = Fallaron + Sender.LocalFileName & ", "
-            Call LauncherLog("Se descargo " & Sender.LocalFileName & " pero falló.")
+104     If Sender.LocalFileName <> LAUNCHEREXEUP Then
+
+            'Si el Hash no coincide...
+106         If ComprobarHash(Sender.LocalFileName) = False Then
+108             Fallaron = Fallaron + Sender.LocalFileName & ", "
+110             Call LauncherLog("Se descargo " & Sender.LocalFileName & " pero falló.")
             
-        Else
-            Call LauncherLog("Se descargo " & Sender.LocalFileName & " correctamente")
+            Else
+112             Call LauncherLog("Se descargo " & Sender.LocalFileName & " correctamente")
             
+            End If
+        
+114         finalizados = finalizados + 1
+        
+        Else 'Si es una actualizacion del Launcher...
+        
+116         ComprobarHash (Sender.LocalFileName)
+118         LauncherDesactualizado = False
+        
         End If
-        
-        finalizados = finalizados + 1
-        
-    Else 'Si es una actualizacion del Launcher...
-        
-        ComprobarHash (Sender.LocalFileName)
-        LauncherDesactualizado = False
-        
-    End If
     
-    If finalizados >= Desactualizados Then
-        frmMain.lblPendientes.Caption = "Cliente actualizado."
+120     If finalizados >= Desactualizados Then
+122         frmMain.lblPendientes.Caption = "Cliente actualizado."
         
-        Desactualizados = 0
-        ReDim DesactualizadosList(Desactualizados) As tArchivos
+124         Desactualizados = 0
+126         ReDim DesactualizadosList(Desactualizados) As tArchivos
         
-    End If
+        End If
   
+        
+        Exit Sub
+
+ucAsyncDLHost_DownloadComplete_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.ucAsyncDLHost_DownloadComplete " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Sub
  
 Private Sub ucAsyncDLHost_DownloadProgress(Sender As ucAsyncDLStripe, ByVal BytesRead As Long, ByVal BytesTotal As Long)
-  Sender.Caption = FormatBytes2KBMBGBTB(BytesRead) & " (" & FormatDLRate(BytesRead, DateDiff("s", Sender.StartDate, Now)) & ")"
+        
+        On Error GoTo ucAsyncDLHost_DownloadProgress_Err
+        
+100     Sender.Caption = FormatBytes2KBMBGBTB(BytesRead) & " (" & FormatDLRate(BytesRead, DateDiff("s", Sender.StartDate, Now)) & ")"
+        
+        Exit Sub
+
+ucAsyncDLHost_DownloadProgress_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.ucAsyncDLHost_DownloadProgress " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Sub
 
 Function FormatBytes2KBMBGBTB(ByVal Bytes As Currency) As String
-Dim i As Long
-  Do While Bytes >= 1024: Bytes = Bytes / 1024: i = i + 1: Loop
-  FormatBytes2KBMBGBTB = Int(Bytes * 10) / 10 & Split(",K,M,G,T", ",")(i) & "B"
+        
+        On Error GoTo FormatBytes2KBMBGBTB_Err
+        
+
+        Dim i As Long
+
+100     Do While Bytes >= 1024
+102         Bytes = Bytes / 1024
+104         i = i + 1
+        Loop
+106     FormatBytes2KBMBGBTB = Int(Bytes * 10) / 10 & Split(",K,M,G,T", ",")(i) & "B"
+        
+        Exit Function
+
+FormatBytes2KBMBGBTB_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.FormatBytes2KBMBGBTB " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Function
 
 Function FormatDLRate(ByVal Bytes As Long, ByVal Seconds As Long) As String
-  If Seconds Then FormatDLRate = FormatBytes2KBMBGBTB(Bytes \ Seconds) & "/s"
+        
+        On Error GoTo FormatDLRate_Err
+        
+
+100     If Seconds Then FormatDLRate = FormatBytes2KBMBGBTB(Bytes \ Seconds) & "/s"
+        
+        Exit Function
+
+FormatDLRate_Err:
+        MsgBox Err.Description & vbCrLf & _
+               "in WinterAOLauncher.frmMain.FormatDLRate " & _
+               "at line " & Erl, _
+               vbExclamation + vbOKOnly, "Application Error"
+        Resume Next
+        
 End Function
