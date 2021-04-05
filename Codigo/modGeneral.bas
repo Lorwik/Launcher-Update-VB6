@@ -8,45 +8,29 @@ Public Directory As String
 Public bDone As Boolean
 Public dError As Boolean
 
+Public Enum eLaunchMode
+    Winter
+    ImpC
+    Portada
+End Enum
+
+Public ServerSelect As Byte
+
 Public Sub Main()
-
-    Dim i As Integer
-
-    'Cargamos listas de archivos y carpetas
-    Call CargarListasLOCAL
-    Call CargarListasREMOTE
-
-    'Comprobamos y creamos carpetas
-    Call CompararyCrearCarpetas
     
-    '¿No existe el archivo de versiones?
-    If SinVersiones Then
-        ActualizacionesPendientes = True
-        
-        'Listamos todos los archivos excepto la posicion 0 que corresponde al propio Launcher.
-        For i = 1 To updateREMOTE.TotalFiles
-        
-            Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
-        
-        Next i
-        
-        frmMain.lblPendientes.Caption = "¡No se ha encontrado el cliente! Pulsa Jugar para descargar los archivos del cliente."
-        Call LauncherLog("¡No se ha encontrado el cliente!")
-        
-    Else
+    If Not FileExist(App.Path & "\Init\Config.ini", vbNormal) Then
+        MsgBox "¡No se encontro el archivo de configuración del Launcher!", vbCritical
+        End
+    End If
     
-        '¿Hay actualizaciones pendientes?
-        ActualizacionesPendientes = modUpdate.CompararArchivos
+    '¿Que server mostramos primero?
+    ServerSelect = GetVar(App.Path & "\Init\Config.ini", "INIT", "Select")
+
+    If ServerSelect <> eLaunchMode.Portada Then
+        frmMain.OptServer(ServerSelect).value = True
         
-        'Notificamos en el Main que hay actualizaciones pendientes
-        If ActualizacionesPendientes Then
-            frmMain.lblPendientes.Caption = "Hay " & Desactualizados & " archivos desactualizados."
-            Call LauncherLog("Hay " & Desactualizados & " archivos desactualizados.")
-            
-        Else
-            frmMain.lblPendientes.Caption = "Cliente actualizado. Pulsa Jugar para abrir el cliente."
-            
-        End If
+        Call SetURLModo
+        Call IniciarChequeo
     End If
 
     DoEvents
@@ -55,9 +39,72 @@ Public Sub Main()
 
 End Sub
 
+Public Function IniciarChequeo()
+'***************************************
+'Autor: Lorwik
+'Fecha: 05/04/2021
+'Descripción: Consulta la lista remota y la compara con la local si existiera
+'Comprueba si las carpetas existen y si los archivos estan actualizados.
+'***************************************
+
+    Dim i As Integer
+
+    frmMain.lblPendientes.Caption = "Comprobando integridad de archivos de " & frmMain.OptServer(ServerSelect).Caption
+
+    'Iniciamos en False
+    ActualizacionesPendientes = False
+
+    If Not FileExist(App.Path & "\" & CLIENTE_FOLDER, vbDirectory) Then _
+        MkDir App.Path & "\" & CLIENTE_FOLDER
+    
+    ActualizacionesPendientes = False
+    SinVersiones = False
+    Desactualizados = 0
+    ReDim DesactualizadosList(Desactualizados) As tArchivos
+    
+    'Cargamos listas de archivos y carpetas
+    Call CargarListasLOCAL
+    Call CargarListasREMOTE
+
+    'Comprobamos y creamos carpetas
+    Call CompararyCrearCarpetas
+        
+    '¿No existe el archivo de versiones?
+    If SinVersiones Then
+        ActualizacionesPendientes = True
+            
+        'Listamos todos los archivos excepto la posicion 0 que corresponde al propio Launcher.
+        For i = 1 To updateREMOTE.TotalFiles
+            
+            Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
+            
+        Next i
+            
+        frmMain.lblPendientes.Caption = "¡No se ha encontrado el cliente! Pulsa Jugar para descargar los archivos del cliente."
+        Call LauncherLog("¡No se ha encontrado el cliente!")
+            
+    Else
+        
+        '¿Hay actualizaciones pendientes?
+        ActualizacionesPendientes = modUpdate.CompararArchivos
+            
+        'Notificamos en el Main que hay actualizaciones pendientes
+        If ActualizacionesPendientes Then
+            frmMain.lblPendientes.Caption = "Hay " & Desactualizados & " archivos desactualizados."
+            Call LauncherLog("Hay " & Desactualizados & " archivos desactualizados.")
+                
+        Else
+            frmMain.lblPendientes.Caption = "Cliente actualizado. Pulsa Jugar para abrir el cliente."
+                
+        End If
+    End If
+        
+End Function
+
 Function FileExist(ByVal File As String, ByVal FileType As VbFileAttribute) As Boolean
     FileExist = (Dir$(File, FileType) <> "")
 End Function
+
 Sub WriteVar(ByVal File As String, ByVal Main As String, ByVal Var As String, ByVal value As String)
 '*****************************************************************
 'Writes a var to a text file
@@ -95,7 +142,7 @@ Public Sub addConsole(Texto As String, Rojo As Byte, Verde As Byte, Azul As Byte
         
         .Refresh
     End With
-frmMain.Caption = "Aut" & "oup" & "date" & " Winter" & "AO, v" & App.Major & "." & App.Minor
+    frmMain.Caption = "Laun" & "cher " & "Comu" & "nidad" & "Winter, v" & App.Major & "." & App.Minor
 End Sub
 
 Public Sub LauncherLog(Desc As String)
@@ -108,12 +155,8 @@ Public Sub LauncherLog(Desc As String)
 
     Dim nfile As Integer
         nfile = FreeFile ' obtenemos un canal
-        
-    '¿No existe la carpeta logs?
-    If Not FileExist(App.Path & "\Logs", vbDirectory) Then _
-        MkDir App.Path & "\Logs"
     
-    Open App.Path & "\Logs\launcher.log" For Append Shared As #nfile
+    Open App.Path & "\Init\launcher.log" For Append Shared As #nfile
         Print #nfile, Date & " " & Time & " " & Desc
     Close #nfile
     
@@ -136,7 +179,7 @@ Public Sub ActualizarVersionInfo(ByVal Archivo As String, ByVal Check As String)
     
     If SinVersiones Then Exit Sub
     
-    For i = 0 To updateREMOTE.TotalFiles
+    For i = 1 To updateREMOTE.TotalFiles
     
         '¿Encontro el archivo?
         If updateREMOTE.Archivos(i).Archivo = Archivo Then

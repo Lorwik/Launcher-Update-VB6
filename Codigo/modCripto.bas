@@ -6,6 +6,7 @@ Private Declare Sub MDStringFix Lib "aamd532.dll" (ByVal f As String, ByVal t As
  
 Private Function MD5String(ByVal p As String) As String
     Dim r As String * 32, t As Long
+    
     r = Space(32)
     t = Len(p)
     MDStringFix p, t, r
@@ -13,8 +14,8 @@ Private Function MD5String(ByVal p As String) As String
 End Function
  
 Private Function MD5File(ByVal f As String) As String
-
     Dim r As String * 32
+    
     r = Space(32)
     MDFile f, r
     MD5File = r
@@ -83,15 +84,15 @@ Public Function ComprobarIntegridad() As Integer
     '***********
     
     '¿Se descargo una actualización para el launcher?
-    If FileExist(App.Path & UpdateLocal.Archivos(0).Archivo, vbNormal) Then
-        '¿El MD5 guardado en local NO coincide con el obtenido del archivo?
-        If UCase(UpdateLocal.Archivos(0).md5) <> UCase(MD5File(UpdateLocal.Archivos(0).Archivo)) Then
-            
-            Call NuevoDesactualizado(UpdateLocal.Archivos(0).Archivo, UpdateLocal.Archivos(0).md5)
-            Count = Count + 1 'Llevamos el control de archivos que no se pudieron comprobar
-            ActualizacionesPendientes = True
-        End If
-    End If
+'    If FileExist(App.Path & UpdateLocal.Archivos(0).Archivo, vbNormal) Then
+'        '¿El MD5 guardado en local NO coincide con el obtenido del archivo?
+'        If UCase(UpdateLocal.Archivos(0).md5) <> UCase(MD5File(UpdateLocal.Archivos(0).Archivo)) Then
+'
+'            Call NuevoDesactualizado(UpdateLocal.Archivos(0).Archivo, UpdateLocal.Archivos(0).md5)
+'            Count = Count + 1 'Llevamos el control de archivos que no se pudieron comprobar
+'            ActualizacionesPendientes = True
+'        End If
+'    End If
     
     '***********
     'ARCHIVOS
@@ -103,8 +104,8 @@ Public Function ComprobarIntegridad() As Integer
         If UpdateLocal.Archivos(i).Archivo <> "Init\Config.ini" And UpdateLocal.Archivos(i).Archivo <> "Init\BindKeys.bin" Then
     
             '¿El MD5 guardado en local NO coincide con el obtenido del archivo?
-            If UCase(UpdateLocal.Archivos(i).md5) <> UCase(MD5File(UpdateLocal.Archivos(i).Archivo)) Then
-            
+            If UCase(UpdateLocal.Archivos(i).md5) <> UCase(MD5File(CLIENTE_FOLDER & "\" & UpdateLocal.Archivos(i).Archivo)) Then
+
                 Call NuevoDesactualizado(UpdateLocal.Archivos(i).Archivo, UpdateLocal.Archivos(i).md5)
                 Count = Count + 1 'Llevamos el control de archivos que no se pudieron comprobar
                 ActualizacionesPendientes = True

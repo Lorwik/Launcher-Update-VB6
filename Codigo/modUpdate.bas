@@ -1,9 +1,11 @@
 Attribute VB_Name = "modUpdate"
 Option Explicit
 
-Private Const URLUPDATE As String = "http://winterao.com.ar/updates/"
+Private Const URLUPDATE As String = "http://winterao.com.ar/update/"
 Private Const VERSIONINFOJSON As String = "VersionInfo.json"
 Private Const VERSIONINFOINI As String = "VersionInfo.ini"
+Public CLIENTE_FOLDER As String
+Public CLIENTEXE As String
 
 Type tArchivos
     md5 As String
@@ -33,8 +35,23 @@ Public ActualizacionesPendientes As Boolean
 Public Fallaron As String
 
 Public Function LocalFile() As String
-    LocalFile = App.Path & "\Init\" & VERSIONINFOINI
+    LocalFile = App.Path & "\" & CLIENTE_FOLDER & "\Init\" & VERSIONINFOINI
 End Function
+
+Public Sub SetURLModo()
+
+    Select Case ServerSelect
+    
+        Case eLaunchMode.Winter
+            CLIENTE_FOLDER = "WinterClient"
+            CLIENTEXE = "\WinterAOResurrection.exe"
+            
+        Case eLaunchMode.ImpC
+            CLIENTE_FOLDER = "ImpcClient"
+            CLIENTEXE = "\ImperiumClasico.exe"
+    End Select
+
+End Sub
 
 Public Sub CargarListasLOCAL()
 '********************************************
@@ -48,6 +65,7 @@ Public Sub CargarListasLOCAL()
 
     '¿Existe el archivo de versiones en el directorio local?
     If Not FileExist(LocalFile, vbArchive) Then
+
         SinVersiones = True
         Exit Sub
     End If
@@ -60,7 +78,7 @@ Public Sub CargarListasLOCAL()
     '**********************
     ReDim UpdateLocal.Archivos(0 To UpdateLocal.TotalFiles) As tArchivos
 
-    For i = 0 To UpdateLocal.TotalFiles
+    For i = 1 To UpdateLocal.TotalFiles
 
         UpdateLocal.Archivos(i).Archivo = GetVar(LocalFile, "File" & i, "name")
         UpdateLocal.Archivos(i).md5 = UCase(GetVar(LocalFile, "File" & i, "checksum"))
@@ -91,22 +109,24 @@ Public Sub CargarListasREMOTE()
     Dim Archivo         As String
     Dim i               As Integer
 
-    responseServer = frmMain.Inet1.OpenURL(URLUPDATE & "cliente/" & VERSIONINFOJSON)
+    responseServer = frmMain.Inet1.OpenURL(URLUPDATE & CLIENTE_FOLDER & "/" & VERSIONINFOJSON)
 
     Set updateREMOTE.JsonListas = ModJson.parse(responseServer)
 
-    updateREMOTE.TotalFiles = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TotalFiles"))
-    updateREMOTE.TotalCarpetas = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TotalFolders"))
+    updateREMOTE.TotalFiles = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALFILES"))
+    updateREMOTE.TotalCarpetas = Val(updateREMOTE.JsonListas.Item("MANIFEST").Item("TOTALFOLDERS"))
     
     '**********************
     'ARCHIVOS
     '**********************
     ReDim updateREMOTE.Archivos(0 To updateREMOTE.TotalFiles) As tArchivos
 
-    For i = 0 To updateREMOTE.TotalFiles
+    For i = 1 To updateREMOTE.TotalFiles
 
-        updateREMOTE.Archivos(i).Archivo = updateREMOTE.JsonListas.Item("Files").Item("File" & i).Item("name")
-        updateREMOTE.Archivos(i).md5 = UCase(updateREMOTE.JsonListas.Item("Files").Item("File" & i).Item("checksum"))
+        updateREMOTE.Archivos(i).Archivo = updateREMOTE.JsonListas.Item("FILES").Item("FILE" & i).Item("NAME")
+        updateREMOTE.Archivos(i).Archivo = Replace$(updateREMOTE.Archivos(i).Archivo, "\/", "\\")
+
+        updateREMOTE.Archivos(i).md5 = UCase(updateREMOTE.JsonListas.Item("FILES").Item("FILE" & i).Item("CHECKSUM"))
 
     Next i
 
@@ -115,13 +135,13 @@ Public Sub CargarListasREMOTE()
     '**********************
     ReDim updateREMOTE.Carpetas(0 To updateREMOTE.TotalCarpetas) As String
 
-    For i = 0 To updateREMOTE.TotalCarpetas
+    For i = 1 To updateREMOTE.TotalCarpetas
 
-        updateREMOTE.Carpetas(i) = updateREMOTE.JsonListas.Item("Folders").Item("Folder" & i).Item("name")
-
+        updateREMOTE.Carpetas(i) = updateREMOTE.JsonListas.Item("FOLDERS").Item("FOLDER" & i - 1).Item("NAME")
+        updateREMOTE.Carpetas(i) = Replace$(updateREMOTE.Carpetas(i), "\/", "\\")
 
     Next i
-
+    
 End Sub
 
 Public Sub CompararyCrearCarpetas()
@@ -134,11 +154,11 @@ Public Sub CompararyCrearCarpetas()
 
     Dim i As Integer
 
-    For i = 0 To updateREMOTE.TotalCarpetas
+    For i = 1 To updateREMOTE.TotalCarpetas
     
-        If Not FileExist(App.Path & "\" & updateREMOTE.Carpetas(i), vbDirectory) Then
+        If Not FileExist(App.Path & "\" & CLIENTE_FOLDER & "\" & updateREMOTE.Carpetas(i), vbDirectory) Then
 
-            MkDir App.Path & "\" & updateREMOTE.Carpetas(i)
+            MkDir App.Path & "\" & CLIENTE_FOLDER & "\" & updateREMOTE.Carpetas(i)
             DoEvents
 
         End If
@@ -179,12 +199,11 @@ Public Function CompararArchivos() As Boolean
     For i = 1 To updateREMOTE.TotalFiles
 
         'Comprobamos todos los CHECK
-        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & updateREMOTE.Archivos(i).Archivo, vbNormal) = False Then
+        If updateREMOTE.Archivos(i).md5 <> UpdateLocal.Archivos(i).md5 Or FileExist(App.Path & "\" & CLIENTE_FOLDER & "\" & updateREMOTE.Archivos(i).Archivo, vbNormal) = False Then
 
             Call NuevoDesactualizado(updateREMOTE.Archivos(i).Archivo, updateREMOTE.Archivos(i).md5)
 
             flag = True 'Activamos el flag
-            Debug.Print updateREMOTE.Archivos(i).Archivo & " desactualizado."
         End If
 
     Next i
@@ -247,8 +266,8 @@ Public Sub ActualizarCliente()
             Call LauncherLog("Descargando " & DesactualizadosList(i).Archivo)
             frmMain.lblPendientes.Caption = "Descargando archivo " & i & " de " & Desactualizados
             
-            frmMain.Inet1.URL = URLUPDATE & "cliente/" & DesactualizadosList(i).Archivo  'Host
-            Directory = App.Path & "\" & DesactualizadosList(i).Archivo
+            frmMain.Inet1.URL = URLUPDATE & CLIENTE_FOLDER & "/" & DesactualizadosList(i).Archivo  'Host
+            Directory = App.Path & "\" & CLIENTE_FOLDER & "\" & DesactualizadosList(i).Archivo
             
             bDone = False
             dError = False
@@ -272,7 +291,7 @@ Public Sub ActualizarCliente()
         Call addConsole("Cliente actualizado correctamente, listo para jugar.", 255, 255, 0, True, False)
         
         ActualizacionesPendientes = False
-        
+
         Desactualizados = 0
         ReDim DesactualizadosList(Desactualizados) As tArchivos
         
@@ -304,14 +323,14 @@ Private Sub ObtenerVersionFile()
         Call WriteVar(LocalFile, "MANIFEST", "TOTALFILES", .TotalFiles)
         Call WriteVar(LocalFile, "MANIFEST", "TOTALCARPETAS", .TotalCarpetas)
         
-        For i = 0 To .TotalFiles
+        For i = 1 To .TotalFiles
         
             Call WriteVar(LocalFile, "File" & i, "name", .Archivos(i).Archivo)
             Call WriteVar(LocalFile, "File" & i, "checksum", .Archivos(i).md5)
         
         Next i
         
-        For i = 0 To .TotalCarpetas
+        For i = 1 To .TotalCarpetas
         
             Call WriteVar(LocalFile, "Folder" & i, "name", .Carpetas(i))
         

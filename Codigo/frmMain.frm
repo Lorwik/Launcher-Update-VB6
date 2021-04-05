@@ -1,56 +1,105 @@
 VERSION 5.00
-Object = "{48E59290-9880-11CF-9754-00AA00C00908}#1.0#0"; "MSINET.ocx"
+Object = "{48E59290-9880-11CF-9754-00AA00C00908}#1.0#0"; "MSINET.OCX"
 Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Begin VB.Form frmMain 
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   1  'Fixed Single
-   Caption         =   "Comunidad Winter Launcher"
-   ClientHeight    =   3480
+   Caption         =   "Launcher ComunidadWinter"
+   ClientHeight    =   4170
    ClientLeft      =   -15
    ClientTop       =   225
-   ClientWidth     =   6780
+   ClientWidth     =   6495
    ClipControls    =   0   'False
    ControlBox      =   0   'False
    Icon            =   "frmMain.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3480
-   ScaleWidth      =   6780
+   ScaleHeight     =   4170
+   ScaleWidth      =   6495
    StartUpPosition =   2  'CenterScreen
+   Begin VB.CommandButton cmdCommand1 
+      Caption         =   "Command1"
+      Height          =   360
+      Left            =   2520
+      TabIndex        =   8
+      Top             =   3840
+      Width           =   990
+   End
+   Begin VB.Frame FraSeleccionaUn 
+      BackColor       =   &H00E0E0E0&
+      Caption         =   "Selecciona un Server de Comunidad Winter"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   855
+      Left            =   120
+      TabIndex        =   5
+      Top             =   120
+      Width           =   6255
+      Begin VB.OptionButton OptServer 
+         BackColor       =   &H00E0E0E0&
+         Caption         =   "Imperium Clasico"
+         Height          =   315
+         Index           =   1
+         Left            =   3720
+         TabIndex        =   7
+         Top             =   360
+         Width           =   1815
+      End
+      Begin VB.OptionButton OptServer 
+         BackColor       =   &H00E0E0E0&
+         Caption         =   "WinterAO Resurrection"
+         Height          =   255
+         Index           =   0
+         Left            =   720
+         TabIndex        =   6
+         Top             =   360
+         Value           =   -1  'True
+         Width           =   2055
+      End
+   End
    Begin VB.CommandButton cmdJugar 
       Caption         =   "Jugar"
       Height          =   480
       Left            =   3960
       TabIndex        =   4
-      Top             =   2880
+      Top             =   3600
       Width           =   2295
    End
    Begin VB.CommandButton cmdCerrar 
       Caption         =   "Cerrar"
       Height          =   480
-      Left            =   480
+      Left            =   360
       TabIndex        =   3
-      Top             =   2880
+      Top             =   3600
       Width           =   1455
    End
    Begin RichTextLib.RichTextBox RichTextBox1 
       Height          =   1695
-      Left            =   240
+      Left            =   120
       TabIndex        =   0
-      Top             =   240
+      Top             =   1080
       Width           =   6255
       _ExtentX        =   11033
       _ExtentY        =   2990
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
+      Appearance      =   0
       TextRTF         =   $"frmMain.frx":000C
    End
    Begin InetCtlsObjects.Inet Inet1 
-      Left            =   6120
-      Top             =   120
+      Left            =   2400
+      Top             =   3000
       _ExtentX        =   1005
       _ExtentY        =   1005
       _Version        =   393216
@@ -60,9 +109,9 @@ Begin VB.Form frmMain
       BackStyle       =   0  'Transparent
       Caption         =   "Actualizado"
       Height          =   195
-      Left            =   240
+      Left            =   120
       TabIndex        =   2
-      Top             =   2040
+      Top             =   2880
       Width           =   6225
    End
    Begin VB.Label LSize 
@@ -70,9 +119,9 @@ Begin VB.Form frmMain
       Caption         =   "0 MBs de 0 MBs"
       ForeColor       =   &H00000000&
       Height          =   255
-      Left            =   240
+      Left            =   120
       TabIndex        =   1
-      Top             =   2280
+      Top             =   3120
       Visible         =   0   'False
       Width           =   2895
    End
@@ -89,12 +138,13 @@ Private Const WS_EX_LAYERED = &H80000
 Private Const WS_EX_TRANSPARENT As Long = &H20&
 Dim f As Integer
 
-Private Const CLIENTEXE As String = "\WinterAOResurrection.exe"
+Private Sub cmdCommand1_Click()
+Debug.Print SinVersiones
+Debug.Print ActualizacionesPendientes
+End Sub
 
 Private Sub cmdJugar_Click()
     Dim Integridad As Integer
-    
-    Debug.Print "Iniciando. Actualizaciones pendientes: " & ActualizacionesPendientes
     
     '¿Hay actualizaciones pendientes?
     If ActualizacionesPendientes Then
@@ -121,15 +171,15 @@ Private Sub cmdJugar_Click()
                 
             Else
         
-                If FileExist(App.Path & CLIENTEXE, vbNormal) Then '¿Existe el .exe del cliente?
-                    Call WriteVar(App.Path & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
+                If FileExist(App.Path & "\" & CLIENTE_FOLDER & "\" & CLIENTEXE, vbNormal) Then  '¿Existe el .exe del cliente?
+                    Call WriteVar(App.Path & "\" & CLIENTE_FOLDER & "\INIT\Config.ini", "PARAMETERS", "LAUCH", "1")
                     DoEvents
-                    Call Shell(App.Path & CLIENTEXE, vbNormalFocus)
+                    Call Shell(App.Path & "\" & CLIENTE_FOLDER & "\" & CLIENTEXE, vbNormalFocus)
                     
                     End
                     
                 Else 'Si no existe, no podemos lanzar nada
-                    MsgBox "No se encontro el ejecutable del juego WinterAOUltimate.exe"
+                    MsgBox "No se encontro el ejecutable del juego " & CLIENTEXE
                     
                 End If
             End If
@@ -184,5 +234,16 @@ Private Sub Inet1_StateChanged(ByVal State As Integer)
             
             bDone = True
     End Select
+    
+End Sub
+
+Private Sub OptServer_Click(Index As Integer)
+
+    ServerSelect = Index
+    
+    Call SetURLModo
+    Call IniciarChequeo
+    
+    Call WriteVar(App.Path & "\Init\Config.ini", "INIT", "Select", ServerSelect)
     
 End Sub

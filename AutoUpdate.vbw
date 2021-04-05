@@ -1,7 +1,7 @@
 ReproducirSonido = 0, 0, 0, 0, C
-frmMain = 78, 78, 2013, 880, , 52, 52, 1842, 936, C
-modUpdate = 130, 130, 1942, 1014, 
-modGeneral = 156, 156, 1968, 1040, 
-ModJson = 182, 182, 1994, 1066, 
-cStringBuilder = 208, 208, 2020, 1092, 
-modCripto = 78, 78, 1890, 962, Z
+frmMain = 130, 130, 2052, 889, , 104, 104, 1908, 988, C
+modUpdate = 52, 52, 1856, 936, Z
+modGeneral = 26, 26, 1298, 680, 
+ModJson = 78, 78, 1882, 962, 
+cStringBuilder = 0, 0, 0, 0, C
+modCripto = 130, 130, 2104, 813, 
